@@ -6,20 +6,21 @@ import SOCKET_URL from "config";
 export default () => {
     const socket = io(SOCKET_URL);
 
-    let uuid = localStorage.getItem('uuid');
-    if (!uuid) {
-        uuid = uuidv4();
-        localStorage.setItem('uuid', uuid);
+    let token = localStorage.getItem('nanoitall-token');
+    if (!token) {
+        token = uuidv4();
+        localStorage.setItem('nanoitall-token', token);
     }
 
     socket.on('connect', () => {
         console.log('Connected');
     });
 
-    function login(username, cb) {
+    function login(address, name, cb) {
         socket.emit('login', {
-            uuid,
-            username
+            token,
+            address,
+            name
         }, cb);
     }
 

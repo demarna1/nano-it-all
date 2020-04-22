@@ -1,14 +1,32 @@
-## Nano-it-all
+# Nano-it-all
 
 Win small amounts of Nano in this free-to-play live trivia competition.
 
-### Build and run locally
+## Developer Getting Started
+
+### Prerequisite: install and start postgres
 
 ```
-git clone https://github.com/demarna1/nano-it-all.git
-cd nano-it-all
+brew install postgresql
+brew services start postgresql
+```
+
+### Install server and client dependencies
+
+```
 npm install
-cd client && npm install && cd ..
+cd client && npm install
+```
+
+### Migrate database
+
+```
+cd server && npx sequelize db:migrate
+```
+
+### Run app locally
+
+```
 npm run dev
 ```
 

@@ -1,0 +1,26 @@
+{
+  "development": {
+    "username": "ndemarco",
+    "password": null,
+    "database": "nanoitall",
+    "host": "127.0.0.1",
+    "dialect": "postgres",
+    "operatorsAliases": false
+  },
+  "test": {
+    "username": "ndemarco",
+    "password": null,
+    "database": "nanoitall",
+    "host": "127.0.0.1",
+    "dialect": "postgres",
+    "operatorsAliases": false
+  },
+  "production": {
+    "username": "ndemarco",
+    "password": null,
+    "database": "nanoitall",
+    "host": "127.0.0.1",
+    "dialect": "postgres",
+    "operatorsAliases": false
+  }
+}
