@@ -8,7 +8,9 @@ export default class Root extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = { socket: null };
+        this.state = {
+            socket: null
+        };
     }
 
     componentDidMount() {
@@ -17,7 +19,11 @@ export default class Root extends React.Component {
 
     render() {
         return (
-            <Layout socket={this.state.socket}/>
+            <div>
+                {this.state.socket &&
+                    <Layout socket={this.state.socket}/>
+                }
+            </div>
         );
     }
 }

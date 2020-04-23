@@ -6,8 +6,8 @@ export default class Login extends React.Component {
         super(props);
 
         this.state = {
-            address: '',
-            name: '',
+            address: this.props.account.address,
+            name: this.props.account.name,
             error: ''
         };
     }
@@ -20,6 +20,10 @@ export default class Login extends React.Component {
         this.setState({name: e.target.value});
     }
 
+    loginError = (error) => {
+        this.setState({error});
+    }
+
     joinClicked = () => {
         const {address, name} = this.state;
         if (address.length !== 65) {
@@ -27,10 +31,16 @@ export default class Login extends React.Component {
         } else if (name.length === 0) {
             this.setState({error: 'Please enter a display name'});
         } else {
-            this.props.socket.login(address, name, (err) => {
-                this.setState({error: err ? err : ''});
-            });
+            this.props.socket.login(address, name);
         }
+    }
+
+    componentDidMount() {
+        this.props.socket.registerLoginErrorHandler(this.loginError);
+    }
+
+    componentWillUnmount() {
+        this.props.socket.unregisterLoginErrorHandler(this.loginError);
     }
 
     render() {
@@ -50,7 +60,7 @@ export default class Login extends React.Component {
                     <input
                         type='text'
                         id='username'
-                        value={this.state.username}
+                        value={this.state.name}
                         placeholder='sample username'
                         onChange={this.nameChanged}/>
                 </div>

@@ -4,27 +4,61 @@ import { v4 as uuidv4 } from 'uuid';
 import SOCKET_URL from "config";
 
 export default () => {
-    const socket = io(SOCKET_URL);
-
     let token = localStorage.getItem('nanoitall-token');
     if (!token) {
         token = uuidv4();
         localStorage.setItem('nanoitall-token', token);
     }
 
+    const socket = io(SOCKET_URL, { query: `token=${token}` });
     socket.on('connect', () => {
-        console.log('Connected');
+        console.log('SIO connection established');
     });
 
-    function login(address, name, cb) {
+    function registerLoginSuccessHandler(cb) {
+        socket.on('login.success', cb);
+    }
+
+    function unregisterLoginSuccessHandler(cb){
+        socket.off('login.success', cb);
+    }
+
+    function registerLoginErrorHandler(cb) {
+        socket.on('login.error', cb);
+    }
+
+    function unregisterLoginErrorHandler(cb) {
+        socket.off('login.error', cb);
+    }
+
+    function registerLogoutSuccessHandler(cb) {
+        socket.on('logout.success', cb);
+    }
+
+    function unregisterLogoutSuccessHandler(cb) {
+        socket.on('logout.success', cb);
+    }
+
+    function login(address, name) {
         socket.emit('login', {
             token,
             address,
             name
-        }, cb);
+        });
+    }
+
+    function logout() {
+        socket.emit('logout');
     }
 
     return {
-        login
+        registerLoginSuccessHandler,
+        unregisterLoginSuccessHandler,
+        registerLoginErrorHandler,
+        unregisterLoginErrorHandler,
+        registerLogoutSuccessHandler,
+        unregisterLogoutSuccessHandler,
+        login,
+        logout
     }
 }
