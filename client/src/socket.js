@@ -36,7 +36,15 @@ export default () => {
     }
 
     function unregisterLogoutSuccessHandler(cb) {
-        socket.on('logout.success', cb);
+        socket.off('logout.success', cb);
+    }
+
+    function registerLoginDuplicateHandler(cb) {
+        socket.on('login.duplicate', cb);
+    }
+
+    function unregisterLoginDuplicateHandler(cb) {
+        socket.off('login.duplicate', cb);
     }
 
     function login(address, name) {
@@ -58,6 +66,8 @@ export default () => {
         unregisterLoginErrorHandler,
         registerLogoutSuccessHandler,
         unregisterLogoutSuccessHandler,
+        registerLoginDuplicateHandler,
+        unregisterLoginDuplicateHandler,
         login,
         logout
     }

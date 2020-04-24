@@ -11,11 +11,23 @@ module.exports = {
       address: {
         type: Sequelize.STRING
       },
+      name: {
+        type: Sequelize.STRING
+      },
+      verified: {
+        type: Sequelize.BOOLEAN
+      },
+      password: {
+        type: Sequelize.STRING
+      },
+      sid: {
+        type: Sequelize.STRING
+      },
       token: {
         type: Sequelize.STRING
       },
-      name: {
-        type: Sequelize.STRING
+      expiresAt: {
+        type: Sequelize.DATE
       },
       createdAt: {
         allowNull: false,

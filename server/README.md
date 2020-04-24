@@ -2,6 +2,6 @@
 
 ```
 npx sequelize-cli init
-npx sequelize-cli model:generate --name Account --attributes address:string,token:string,name:string
+npx sequelize-cli model:generate --name Account --attributes address:string,name:string,verified:boolean,password:string,sid:string,token:string,expiresAt:date
 npx sequelize db:migrate
 ```
