@@ -1,4 +1,5 @@
 const models = require('./models');
+const io = require('./index').io;
 
 module.exports = class Session {
 
@@ -22,23 +23,15 @@ module.exports = class Session {
             if (account === null) {
                 // No account associated with this token so make them log in.
                 this.onLogoutSuccess();
-            } else if (account.sid) {
-                // There's already a connection with this token so let them know.
-                // This can happen when a user opens a 2nd tab in the same browser.
-                this.onLoginDuplicate();
             } else {
-                // Restore the user's session.
-                console.log(`${account.name} connection restored`);
-                account.sid = sid;
-                account.save();
-                this.account = account;
-                this.onLoginSuccess(account);
+                // Existing account found for this token
+                this.loginExistingAccount(account);
             }
         });
     }
 
-    login = async (address, name) => {
-        // Normalize data sent from the client.
+    // Handle user authentication and account provisioning
+    async login(address, name) {
         address = address.toLowerCase();
         name = name.substr(0, 12);
 
@@ -49,7 +42,7 @@ module.exports = class Session {
             return;
         }
 
-        // Check again for an existing connection with this token. Someone
+        // Check again for an existing connection with this token. The user
         // could have joined in another tab since this socket had connected.
         let account = await models.Account.findOne({
             where: { token: this.token }
@@ -62,53 +55,70 @@ module.exports = class Session {
         account = await models.Account.findOne({ where: {address} });
         if (account === null) {
             // Nano address not found, so create a new account.
-            models.Account.create({
-                address,
-                name,
-                verified: false,
-                password: null,
-                sid: this.sid,
-                token: this.token,
-                expiresAt: new Date(new Date() + 24 * 60 * 60 * 1000)
-            }).then((account) => {
-                console.log(`${account.name} joined with new account`);
-                this.account = account;
-                this.onLoginSuccess(account);
-            });
+            this.loginNewAccount(address, name);
+        } else if (account.verified) {
+            // Account found but authentication required (not yet implemented).
+            this.onLoginError('Authentication required');
         } else {
-            if (account.verified) {
-                // Account found but authentication required (not yet implemented).
-                this.onLoginError('Authentication required');
-            } else if (account.token) {
-                // This account is being actively used by a different user token.
-                this.onLoginError('Nano address already in use');
-            } else {
-                // User will be logged in to their existing account.
-                account.sid = this.sid;
-                account.token = this.token;
-                account.expiresAt = new Date(new Date() + 24 * 60 * 60 * 1000);
-                account.save();
-                console.log(`${account.name} joined with existing account`);
-                this.account = account;
-                this.onLoginSuccess(account);
-            }
+            this.loginExistingAccount(account);
         }
     }
 
-    logout = () => {
-        // Unlink the current account from this socket and user token (frees
-        // it to be used by other tabs or devices).
+    // Create a new account and then log them in.
+    loginNewAccount(address, name) {
+        const account = models.Account.build({
+            address,
+            name,
+            verified: false,
+            password: null
+        });
+        this.finishLogin(account);
+    }
+
+    // If there's already a connection associated this token, check the
+    // list of clients to see if it's still active. Otherwise, log in.
+    loginExistingAccount(account) {
+        if (account.sid) {
+            io.clients((err, clients) => {
+                if (err) throw err;
+                if (clients.indexOf(account.sid) > -1) {
+                    // Account already has a session (e.g. user opened a second tab),
+                    // so reject the login.
+                    this.onLoginDuplicate();
+                } else {
+                    // Socket was orphaned (e.g. server restarted while connected),
+                    // so overwrite the session and log in.
+                    this.finishLogin(account);
+                }
+            });
+        } else {
+            // Restore the user's session
+            this.finishLogin(account);
+        }
+    }
+
+    // Log the user into their account and refresh the session details.
+    finishLogin(account) {
+        account.sid = this.sid;
+        account.token = this.token;
+        account.save();
+        this.account = account;
+        this.onLoginSuccess(account);
+    }
+
+    // Unlink the current account from this socket and user token (frees it
+    // to be used by other tabs or devices).
+    logout() {
         this.account.sid = null;
         this.account.token = null;
         this.account.save();
-        console.log(`${this.account.name} left`);
         this.account = null;
         this.onLogoutSuccess();
     }
 
-    disconnect = () => {
-        // Socket is about to close (e.g. browser closed), so unlink the
-        // account from this socket.
+    // Socket is about to close (e.g. browser closed), so unlink the account
+    // from this socket.
+    disconnect() {
         if (this.account) {
             this.account.sid = null;
             this.account.save();
