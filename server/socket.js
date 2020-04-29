@@ -1,14 +1,21 @@
-const io = require('./index').io;
 const Session = require('./session');
 
 module.exports = function(socket) {
+
+    onAddressError = (error) => {
+        socket.emit('address.error', error);
+    }
+
+    onPasswordError = (error) => {
+        socket.emit('password.error', error);
+    }
 
     onLoginSuccess = (account) => {
         socket.emit('login.success', account);
     }
 
-    onLoginError = (error) => {
-        socket.emit('login.error', error);
+    onLoginVerify = (account) => {
+        socket.emit('login.verify', account);
     }
 
     onLoginDuplicate = () => {
@@ -19,8 +26,12 @@ module.exports = function(socket) {
         socket.emit('logout.success');
     }
 
-    socket.on('login', (data) => {
-        socket.session.login(data.address, data.name);
+    socket.on('login.address', (address) => {
+        socket.session.login(address, null);
+    });
+
+    socket.on('login.password', ({address, password}) => {
+        socket.session.login(address, password);
     });
 
     socket.on('logout', () => {
@@ -34,8 +45,10 @@ module.exports = function(socket) {
     socket.session = new Session(
         socket.id,
         socket.handshake.query.token,
+        onAddressError,
+        onPasswordError,
         onLoginSuccess,
-        onLoginError,
+        onLoginVerify,
         onLoginDuplicate,
         onLogoutSuccess
     );

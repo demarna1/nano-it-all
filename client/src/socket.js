@@ -4,6 +4,22 @@ import { v4 as uuidv4 } from 'uuid';
 import SOCKET_URL from "config";
 
 export default () => {
+
+    const EventsFromServer = Object.freeze({
+        ADDRESS_ERROR: "address.error",
+        PASSWORD_ERROR: "password.error",
+        LOGIN_DUPLICATE: "login.duplicate",
+        LOGIN_SUCCESS: "login.success",
+        LOGIN_VERIFY: "login.verify",
+        LOGOUT_SUCCESS: "logout.success",
+    });
+
+    const EventsToServer = Object.freeze({
+        LOGIN_ADDRESS: "login.address",
+        LOGIN_PASSWORD: "login.password",
+        LOGOUT: "logout"
+    });
+
     let token = localStorage.getItem('nanoitall-token');
     if (!token) {
         token = uuidv4();
@@ -15,60 +31,32 @@ export default () => {
         console.log('SIO connection established');
     });
 
-    function registerLoginSuccessHandler(cb) {
-        socket.on('login.success', cb);
+    function registerHandler(event, cb) {
+        socket.on(event, cb);
     }
 
-    function unregisterLoginSuccessHandler(cb){
-        socket.off('login.success', cb);
+    function unregisterHandler(event, cb) {
+        socket.off(event, cb);
     }
 
-    function registerLoginErrorHandler(cb) {
-        socket.on('login.error', cb);
+    function loginAddress(address) {
+        socket.emit(EventsToServer.LOGIN_ADDRESS, address);
     }
 
-    function unregisterLoginErrorHandler(cb) {
-        socket.off('login.error', cb);
-    }
-
-    function registerLogoutSuccessHandler(cb) {
-        socket.on('logout.success', cb);
-    }
-
-    function unregisterLogoutSuccessHandler(cb) {
-        socket.off('logout.success', cb);
-    }
-
-    function registerLoginDuplicateHandler(cb) {
-        socket.on('login.duplicate', cb);
-    }
-
-    function unregisterLoginDuplicateHandler(cb) {
-        socket.off('login.duplicate', cb);
-    }
-
-    function login(address, name) {
-        socket.emit('login', {
-            token,
-            address,
-            name
-        });
+    function loginPassword(address, password) {
+        socket.emit(EventsToServer.LOGIN_PASSWORD, {address, password});
     }
 
     function logout() {
-        socket.emit('logout');
+        socket.emit(EventsToServer.LOGOUT);
     }
 
     return {
-        registerLoginSuccessHandler,
-        unregisterLoginSuccessHandler,
-        registerLoginErrorHandler,
-        unregisterLoginErrorHandler,
-        registerLogoutSuccessHandler,
-        unregisterLogoutSuccessHandler,
-        registerLoginDuplicateHandler,
-        unregisterLoginDuplicateHandler,
-        login,
+        Events: EventsFromServer,
+        registerHandler,
+        unregisterHandler,
+        loginAddress,
+        loginPassword,
         logout
     }
 }

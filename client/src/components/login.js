@@ -1,75 +1,103 @@
 import React from 'react';
+import Address from 'components/address';
+import Password from 'components/password';
+import Main from 'components/main';
 
 export default class Login extends React.Component {
 
     constructor(props) {
         super(props);
 
+        this.LoginStatus = Object.freeze({
+            PREINIT: 0,
+            DUPLICATE: 1,
+            LOGGEDOUT: 2,
+            PREAUTH: 3,
+            LOGGEDIN: 4
+        });
+
         this.state = {
-            address: this.props.account.address,
-            name: this.props.account.name,
-            error: ''
+            loginStatus: this.LoginStatus.PREINIT,
+            account: {
+                address: '',
+                name: ''
+            }
         };
     }
 
-    addressChanged = (e) => {
-        this.setState({address: e.target.value});
+    loginSuccess = (account) => {
+        console.log(`User logged in: ${JSON.stringify(account)}`);
+        this.setState({
+            loginStatus: this.LoginStatus.LOGGEDIN,
+            account
+        });
     }
 
-    nameChanged = (e) => {
-        this.setState({name: e.target.value});
+    loginVerify = (account) => {
+        console.log(`User requires auth: ${JSON.stringify(account)}`);
+        this.setState({
+            loginStatus: this.LoginStatus.PREAUTH,
+            account
+        });
     }
 
-    loginError = (error) => {
-        this.setState({error});
+    logoutSuccess = () => {
+        console.log('User logged out');
+        this.setState({
+            loginStatus: this.LoginStatus.LOGGEDOUT
+        });
     }
 
-    joinClicked = () => {
-        const {address, name} = this.state;
-        if (address.length !== 65) {
-            this.setState({error: 'Nano address must be 65 characters'});
-        } else if (name.length === 0) {
-            this.setState({error: 'Please enter a display name'});
-        } else {
-            this.props.socket.login(address, name);
-        }
+    loginDuplicate = () => {
+        console.log('Duplicate connection');
+        this.setState({
+            loginStatus: this.LoginStatus.DUPLICATE
+        });
     }
 
     componentDidMount() {
-        this.props.socket.registerLoginErrorHandler(this.loginError);
+        const {socket} = this.props;
+        socket.registerHandler(socket.Events.LOGIN_SUCCESS, this.loginSuccess);
+        socket.registerHandler(socket.Events.LOGIN_VERIFY, this.loginVerify);
+        socket.registerHandler(socket.Events.LOGOUT_SUCCESS, this.logoutSuccess);
+        socket.registerHandler(socket.Events.LOGIN_DUPLICATE, this.loginDuplicate);
     }
 
     componentWillUnmount() {
-        this.props.socket.unregisterLoginErrorHandler(this.loginError);
+        const {socket} = this.props;
+        socket.unregisterHandler(socket.Events.LOGIN_SUCCESS, this.loginSuccess);
+        socket.unregisterHandler(socket.Events.LOGIN_VERIFY, this.loginVerify);
+        socket.unregisterHandler(socket.Events.LOGOUT_SUCCESS, this.logoutSuccess);
+        socket.unregisterHandler(socket.Events.LOGIN_DUPLICATE, this.loginDuplicate);
     }
 
     render() {
+        const {loginStatus, account} = this.state;
+
+        let content;
+        switch (loginStatus) {
+            case this.LoginStatus.PREINIT:
+                content = <div></div>;
+                break;
+            case this.LoginStatus.DUPLICATE:
+                content = <div>Session Duplicated</div>
+                break;
+            case this.LoginStatus.LOGGEDOUT:
+                content = <Address socket={this.props.socket} account={account}/>
+                break;
+            case this.LoginStatus.PREAUTH:
+                content = <Password socket={this.props.socket} account={account}/>
+                break;
+            case this.LoginStatus.LOGGEDIN:
+                content = <Main socket={this.props.socket} account={account}/>
+                break;
+        }
+
         return (
             <div>
-                <div>
-                    <label htmlFor='address'>Address</label>
-                    <input
-                        type='text'
-                        id='address'
-                        value={this.state.address}
-                        placeholder='sample address'
-                        onChange={this.addressChanged}/>
-                </div>
-                <div>
-                    <label htmlFor='username'>Name</label>
-                    <input
-                        type='text'
-                        id='username'
-                        value={this.state.name}
-                        placeholder='sample username'
-                        onChange={this.nameChanged}/>
-                </div>
-                <input
-                    type='button'
-                    value='Join'
-                    onClick={this.joinClicked}/>
-                <div>{this.state.error}</div>
+                <h2>Nano-it-all</h2>
+                {content}
             </div>
-        )
+        );
     }
 }

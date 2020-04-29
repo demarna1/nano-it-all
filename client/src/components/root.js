@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Layout from 'components/layout';
+import Login from 'components/login';
 import Socket from 'socket';
 
 export default class Root extends React.Component {
@@ -21,7 +21,7 @@ export default class Root extends React.Component {
         return (
             <div>
                 {this.state.socket &&
-                    <Layout socket={this.state.socket}/>
+                    <Login socket={this.state.socket}/>
                 }
             </div>
         );

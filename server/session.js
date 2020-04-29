@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const models = require('./models');
 const io = require('./index').io;
 
@@ -6,14 +7,16 @@ module.exports = class Session {
     // New connection established. Search for their token so we can restore
     // their session if it's available. For example, we'll need to restore
     // the session when the user refreshes the page.
-    constructor(sid, token, onLoginSuccess, onLoginError,
-        onLoginDuplicate, onLogoutSuccess) {
+    constructor(sid, token, onAddressError, onPasswordError, onLoginSuccess,
+        onLoginVerify, onLoginDuplicate, onLogoutSuccess) {
 
         this.account = null;
         this.sid = sid;
         this.token = token;
+        this.onAddressError = onAddressError;
+        this.onPasswordError = onPasswordError;
         this.onLoginSuccess = onLoginSuccess;
-        this.onLoginError = onLoginError;
+        this.onLoginVerify = onLoginVerify;
         this.onLoginDuplicate = onLoginDuplicate;
         this.onLogoutSuccess = onLogoutSuccess;
 
@@ -30,15 +33,14 @@ module.exports = class Session {
         });
     }
 
-    // Handle user authentication and account provisioning
-    async login(address, name) {
+    // Handle authentication and account provisioning
+    async login(address, password) {
         address = address.toLowerCase();
-        name = name.substr(0, 12);
 
         // Check the format of the nano address.
         const nanoRegex = /^(nano|xrb)_[13]{1}[13456789abcdefghijkmnopqrstuwxyz]{59}$/;
         if (!nanoRegex.test(address)) {
-            this.onLoginError('Invalid Nano address format');
+            this.onAddressError('Invalid Nano address format');
             return;
         }
 
@@ -55,24 +57,33 @@ module.exports = class Session {
         account = await models.Account.findOne({ where: {address} });
         if (account === null) {
             // Nano address not found, so create a new account.
-            this.loginNewAccount(address, name);
+            const account = models.Account.build({
+                address,
+                name: null,
+                verified: false,
+                password: null
+            });
+            this.finishLogin(account);
         } else if (account.verified) {
-            // Account found but authentication required (not yet implemented).
-            this.onLoginError('Authentication required');
+            // Account found but extra authentication required.
+            if (password) {
+                bcrypt.compare(password, account.password, (err, res) => {
+                    if (err) {
+                        this.onPasswordError(err);
+                    } else if (res) {
+                        // Passwords matched
+                        this.finishLogin(account);
+                    } else {
+                        // Passwords didn't match
+                        this.onPasswordError('Incorrect password');
+                    }
+                });
+            } else {
+                this.onLoginVerify(account);
+            }
         } else {
             this.loginExistingAccount(account);
         }
-    }
-
-    // Create a new account and then log them in.
-    loginNewAccount(address, name) {
-        const account = models.Account.build({
-            address,
-            name,
-            verified: false,
-            password: null
-        });
-        this.finishLogin(account);
     }
 
     // If there's already a connection associated this token, check the
