@@ -41,6 +41,7 @@ export default class Password extends React.Component {
     render() {
         return (
             <div>
+                <h2>Welcome back, {this.props.account.name}!</h2>
                 <div>
                     <label htmlFor='password'>Password</label>
                     <input
@@ -56,6 +57,6 @@ export default class Password extends React.Component {
                     onClick={this.loginClicked}/>
                 <div>{this.state.error}</div>
             </div>
-        )
+        );
     }
 }

@@ -30,6 +30,10 @@ module.exports = function(socket) {
         socket.session.login(address, null);
     });
 
+    socket.on('login.name', ({address, name}) => {
+        socket.session.setName(address, name);
+    });
+
     socket.on('login.password', ({address, password}) => {
         socket.session.login(address, password);
     });

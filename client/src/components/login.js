@@ -1,7 +1,8 @@
 import React from 'react';
 import Address from 'components/address';
-import Password from 'components/password';
+import Name from 'components/name';
 import Main from 'components/main';
+import Password from 'components/password';
 
 export default class Login extends React.Component {
 
@@ -94,7 +95,11 @@ export default class Login extends React.Component {
                 content = <Password socket={this.props.socket} account={account}/>
                 break;
             case this.LoginStatus.LOGGEDIN:
-                content = <Main socket={this.props.socket} account={account}/>
+                if (account.name) {
+                    content = <Main socket={this.props.socket} account={account}/>
+                } else {
+                    content = <Name socket={this.props.socket} account={account}/>
+                }
                 break;
             case this.LoginStatus.PREINIT:
             default:

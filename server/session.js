@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const { Op } = require("sequelize");
 const models = require('./models');
 const game = require('./index').game;
 const io = require('./index').io;
@@ -80,6 +81,21 @@ module.exports = class Session {
         } else {
             this.loginExistingAccount(account);
         }
+    }
+
+    // Set the name of this account. Check the socket id to make sure
+    // this connection is authorized.
+    setName(address, name) {
+        models.Account.findOne({
+            where: {
+                [Op.and]: [{ address }, { sid: this.sid }]
+            }
+        }).then((account) => {
+            if (account) {
+                account.name = name;
+                this.finishLogin(account);
+            }
+        });
     }
 
     // If there's already a connection associated this token, check the

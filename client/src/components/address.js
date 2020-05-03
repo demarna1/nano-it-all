@@ -57,6 +57,6 @@ export default class Address extends React.Component {
                     onClick={this.joinClicked}/>
                 <div>{this.state.error}</div>
             </div>
-        )
+        );
     }
 }

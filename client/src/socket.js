@@ -17,6 +17,7 @@ export default () => {
 
     const EventsToServer = Object.freeze({
         LOGIN_ADDRESS: "login.address",
+        LOGIN_NAME: "login.name",
         LOGIN_PASSWORD: "login.password",
         LOGOUT: "logout"
     });
@@ -48,6 +49,10 @@ export default () => {
         socket.emit(EventsToServer.LOGIN_PASSWORD, {address, password});
     }
 
+    function loginName(address, name) {
+        socket.emit(EventsToServer.LOGIN_NAME, {address, name});
+    }
+
     function logout() {
         socket.emit(EventsToServer.LOGOUT);
     }
@@ -57,6 +62,7 @@ export default () => {
         registerHandler,
         unregisterHandler,
         loginAddress,
+        loginName,
         loginPassword,
         logout
     }
