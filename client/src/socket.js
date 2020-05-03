@@ -12,6 +12,7 @@ export default () => {
         LOGIN_SUCCESS: "login.success",
         LOGIN_VERIFY: "login.verify",
         LOGOUT_SUCCESS: "logout.success",
+        STATE_CHANGE: "state"
     });
 
     const EventsToServer = Object.freeze({

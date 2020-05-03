@@ -45,11 +45,13 @@ module.exports = function(socket) {
     socket.session = new Session(
         socket.id,
         socket.handshake.query.token,
-        onAddressError,
-        onPasswordError,
-        onLoginSuccess,
-        onLoginVerify,
-        onLoginDuplicate,
-        onLogoutSuccess
+        {
+            onAddressError,
+            onPasswordError,
+            onLoginSuccess,
+            onLoginVerify,
+            onLoginDuplicate,
+            onLogoutSuccess
+        }
     );
 }

@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const models = require('./models');
+const game = require('./index').game;
 const io = require('./index').io;
 
 module.exports = class Session {
@@ -7,25 +8,20 @@ module.exports = class Session {
     // New connection established. Search for their token so we can restore
     // their session if it's available. For example, we'll need to restore
     // the session when the user refreshes the page.
-    constructor(sid, token, onAddressError, onPasswordError, onLoginSuccess,
-        onLoginVerify, onLoginDuplicate, onLogoutSuccess) {
+    constructor(sid, token, cb) {
+        game.updateOnline();
 
         this.account = null;
         this.sid = sid;
         this.token = token;
-        this.onAddressError = onAddressError;
-        this.onPasswordError = onPasswordError;
-        this.onLoginSuccess = onLoginSuccess;
-        this.onLoginVerify = onLoginVerify;
-        this.onLoginDuplicate = onLoginDuplicate;
-        this.onLogoutSuccess = onLogoutSuccess;
+        this.cb = cb;
 
         models.Account.findOne({
             where: { token }
         }).then((account) => {
             if (account === null) {
                 // No account associated with this token so make them log in.
-                this.onLogoutSuccess();
+                this.cb.onLogoutSuccess();
             } else {
                 // Existing account found for this token
                 this.loginExistingAccount(account);
@@ -40,7 +36,7 @@ module.exports = class Session {
         // Check the format of the nano address.
         const nanoRegex = /^(nano|xrb)_[13]{1}[13456789abcdefghijkmnopqrstuwxyz]{59}$/;
         if (!nanoRegex.test(address)) {
-            this.onAddressError('Invalid Nano address format');
+            this.cb.onAddressError('Invalid Nano address format');
             return;
         }
 
@@ -50,7 +46,7 @@ module.exports = class Session {
             where: { token: this.token }
         });
         if (account && account.sid) {
-            this.onLoginDuplicate();
+            this.cb.onLoginDuplicate();
             return;
         }
 
@@ -69,17 +65,17 @@ module.exports = class Session {
             if (password) {
                 bcrypt.compare(password, account.password, (err, res) => {
                     if (err) {
-                        this.onPasswordError(err);
+                        this.cb.onPasswordError(err);
                     } else if (res) {
                         // Passwords matched
                         this.finishLogin(account);
                     } else {
                         // Passwords didn't match
-                        this.onPasswordError('Incorrect password');
+                        this.cb.onPasswordError('Incorrect password');
                     }
                 });
             } else {
-                this.onLoginVerify(account);
+                this.cb.onLoginVerify(account);
             }
         } else {
             this.loginExistingAccount(account);
@@ -95,7 +91,7 @@ module.exports = class Session {
                 if (clients.indexOf(account.sid) > -1) {
                     // Account already has a session (e.g. user opened a second tab),
                     // so reject the login.
-                    this.onLoginDuplicate();
+                    this.cb.onLoginDuplicate();
                 } else {
                     // Socket was orphaned (e.g. server restarted while connected),
                     // so overwrite the session and log in.
@@ -114,7 +110,7 @@ module.exports = class Session {
         account.token = this.token;
         account.save();
         this.account = account;
-        this.onLoginSuccess(account);
+        this.cb.onLoginSuccess(account);
     }
 
     // Unlink the current account from this socket and user token (frees it
@@ -124,12 +120,13 @@ module.exports = class Session {
         this.account.token = null;
         this.account.save();
         this.account = null;
-        this.onLogoutSuccess();
+        this.cb.onLogoutSuccess();
     }
 
     // Socket is about to close (e.g. browser closed), so unlink the account
     // from this socket.
     disconnect() {
+        game.updateOnline();
         if (this.account) {
             this.account.sid = null;
             this.account.save();

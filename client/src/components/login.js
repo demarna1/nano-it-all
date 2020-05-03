@@ -17,12 +17,18 @@ export default class Login extends React.Component {
         });
 
         this.state = {
+            online: 0,
             loginStatus: this.LoginStatus.PREINIT,
             account: {
                 address: '',
                 name: ''
             }
         };
+    }
+
+    gameStateChange = (state) => {
+        console.log(`Game state changed: ${JSON.stringify(state)}`);
+        this.setState({online: state.online});
     }
 
     loginSuccess = (account) => {
@@ -57,6 +63,7 @@ export default class Login extends React.Component {
 
     componentDidMount() {
         const {socket} = this.props;
+        socket.registerHandler(socket.Events.STATE_CHANGE, this.gameStateChange);
         socket.registerHandler(socket.Events.LOGIN_SUCCESS, this.loginSuccess);
         socket.registerHandler(socket.Events.LOGIN_VERIFY, this.loginVerify);
         socket.registerHandler(socket.Events.LOGOUT_SUCCESS, this.logoutSuccess);
@@ -65,6 +72,7 @@ export default class Login extends React.Component {
 
     componentWillUnmount() {
         const {socket} = this.props;
+        socket.unregisterHandler(socket.Events.STATE_CHANGE, this.gameStateChange);
         socket.unregisterHandler(socket.Events.LOGIN_SUCCESS, this.loginSuccess);
         socket.unregisterHandler(socket.Events.LOGIN_VERIFY, this.loginVerify);
         socket.unregisterHandler(socket.Events.LOGOUT_SUCCESS, this.logoutSuccess);
@@ -76,9 +84,6 @@ export default class Login extends React.Component {
 
         let content;
         switch (loginStatus) {
-            case this.LoginStatus.PREINIT:
-                content = <div></div>;
-                break;
             case this.LoginStatus.DUPLICATE:
                 content = <div>Session Duplicated</div>
                 break;
@@ -91,11 +96,16 @@ export default class Login extends React.Component {
             case this.LoginStatus.LOGGEDIN:
                 content = <Main socket={this.props.socket} account={account}/>
                 break;
+            case this.LoginStatus.PREINIT:
+            default:
+                content = <div></div>;
+                break;
         }
 
         return (
             <div>
                 <h2>Nano-it-all</h2>
+                <div># Online: {this.state.online}</div>
                 {content}
             </div>
         );
