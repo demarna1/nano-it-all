@@ -1,4 +1,6 @@
 import React from 'react';
+import { Phase } from 'lib';
+
 import Address from 'components/address';
 import Name from 'components/name';
 import Main from 'components/main';
@@ -13,8 +15,9 @@ export default class Login extends React.Component {
             PREINIT: 0,
             DUPLICATE: 1,
             LOGGEDOUT: 2,
-            PREAUTH: 3,
-            LOGGEDIN: 4
+            PRENAME: 3,
+            PREAUTH: 4,
+            LOGGEDIN: 5
         });
 
         this.state = {
@@ -28,20 +31,22 @@ export default class Login extends React.Component {
     }
 
     gameStateChange = (state) => {
-        console.log(`Game state changed: ${JSON.stringify(state)}`);
+        console.log(`Phase: ${state.phase}`);
+        console.log(`Test: ${Phase.pregame}`);
         this.setState({online: state.online});
     }
 
     loginSuccess = (account) => {
-        console.log(`User logged in: ${JSON.stringify(account)}`);
+        const loginStatus = account.name
+            ? this.LoginStatus.LOGGEDIN
+            : this.LoginStatus.PRENAME
         this.setState({
-            loginStatus: this.LoginStatus.LOGGEDIN,
+            loginStatus,
             account
         });
     }
 
     loginVerify = (account) => {
-        console.log(`User requires auth: ${JSON.stringify(account)}`);
         this.setState({
             loginStatus: this.LoginStatus.PREAUTH,
             account
@@ -49,14 +54,12 @@ export default class Login extends React.Component {
     }
 
     logoutSuccess = () => {
-        console.log('User logged out');
         this.setState({
             loginStatus: this.LoginStatus.LOGGEDOUT
         });
     }
 
     loginDuplicate = () => {
-        console.log('Duplicate connection');
         this.setState({
             loginStatus: this.LoginStatus.DUPLICATE
         });
@@ -91,15 +94,14 @@ export default class Login extends React.Component {
             case this.LoginStatus.LOGGEDOUT:
                 content = <Address socket={this.props.socket} account={account}/>
                 break;
+            case this.LoginStatus.PRENAME:
+                content = <Name socket={this.props.socket} account={account}/>
+                break;
             case this.LoginStatus.PREAUTH:
                 content = <Password socket={this.props.socket} account={account}/>
                 break;
             case this.LoginStatus.LOGGEDIN:
-                if (account.name) {
-                    content = <Main socket={this.props.socket} account={account}/>
-                } else {
-                    content = <Name socket={this.props.socket} account={account}/>
-                }
+                content = <Main socket={this.props.socket} account={account}/>
                 break;
             case this.LoginStatus.PREINIT:
             default:

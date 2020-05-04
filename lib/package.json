@@ -1,0 +1,7 @@
+{
+  "name": "lib",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.js",
+  "description": "Common code for server and client"
+}

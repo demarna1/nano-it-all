@@ -1,27 +1,9 @@
 import io from "socket.io-client";
 import { v4 as uuidv4 } from 'uuid';
-
+import { Event } from 'lib';
 import SOCKET_URL from "config";
 
 export default () => {
-
-    const EventsFromServer = Object.freeze({
-        ADDRESS_ERROR: "address.error",
-        PASSWORD_ERROR: "password.error",
-        LOGIN_DUPLICATE: "login.duplicate",
-        LOGIN_SUCCESS: "login.success",
-        LOGIN_VERIFY: "login.verify",
-        LOGOUT_SUCCESS: "logout.success",
-        STATE_CHANGE: "state"
-    });
-
-    const EventsToServer = Object.freeze({
-        LOGIN_ADDRESS: "login.address",
-        LOGIN_NAME: "login.name",
-        LOGIN_PASSWORD: "login.password",
-        LOGOUT: "logout"
-    });
-
     let token = localStorage.getItem('nanoitall-token');
     if (!token) {
         token = uuidv4();
@@ -42,23 +24,23 @@ export default () => {
     }
 
     function loginAddress(address) {
-        socket.emit(EventsToServer.LOGIN_ADDRESS, address);
+        socket.emit(Event.C2S.LOGIN_ADDRESS, address);
     }
 
     function loginPassword(address, password) {
-        socket.emit(EventsToServer.LOGIN_PASSWORD, {address, password});
+        socket.emit(Event.C2S.LOGIN_PASSWORD, {address, password});
     }
 
     function loginName(address, name) {
-        socket.emit(EventsToServer.LOGIN_NAME, {address, name});
+        socket.emit(Event.C2S.LOGIN_NAME, {address, name});
     }
 
     function logout() {
-        socket.emit(EventsToServer.LOGOUT);
+        socket.emit(Event.C2S.LOGOUT);
     }
 
     return {
-        Events: EventsFromServer,
+        Events: Event.S2C,
         registerHandler,
         unregisterHandler,
         loginAddress,
