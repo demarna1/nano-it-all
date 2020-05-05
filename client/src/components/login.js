@@ -1,6 +1,5 @@
 import React from 'react';
-import { Phase } from 'lib';
-
+import Countdown from 'react-countdown';
 import Address from 'components/address';
 import Name from 'components/name';
 import Main from 'components/main';
@@ -21,8 +20,8 @@ export default class Login extends React.Component {
         });
 
         this.state = {
-            online: 0,
             loginStatus: this.LoginStatus.PREINIT,
+            gameState: null,
             account: {
                 address: '',
                 name: ''
@@ -30,10 +29,8 @@ export default class Login extends React.Component {
         };
     }
 
-    gameStateChange = (state) => {
-        console.log(`Phase: ${state.phase}`);
-        console.log(`Test: ${Phase.pregame}`);
-        this.setState({online: state.online});
+    gameStateChange = (gameState) => {
+        this.setState({gameState});
     }
 
     loginSuccess = (account) => {
@@ -84,7 +81,7 @@ export default class Login extends React.Component {
     }
 
     render() {
-        const {loginStatus, account} = this.state;
+        const {loginStatus, gameState, account} = this.state;
 
         let content;
         switch (loginStatus) {
@@ -112,7 +109,9 @@ export default class Login extends React.Component {
         return (
             <div>
                 <h2>Nano-it-all</h2>
-                <div># Online: {this.state.online}</div>
+                {gameState &&
+                    <div>Game start: <Countdown date={Date.now() + gameState.phaseTimeLeftMs}/></div>}
+                {gameState && <div>Users online: {gameState.online}</div>}
                 {content}
             </div>
         );

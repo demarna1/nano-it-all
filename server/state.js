@@ -5,6 +5,7 @@ module.exports = class State {
     constructor() {
         this.online = 0;
         this.phase = Phase.pregame;
-        this.phaseLengthMs = 0;
+        this.phaseEndDate = null;
+        this.phaseTimeLeftMs = 0;
     }
 }

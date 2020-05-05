@@ -8,17 +8,22 @@ module.exports = class Game {
         this.state = new State();
         this.dirty = false;
 
-        this.scheduler = new Scheduler((phase, phaseLengthMs) => {
+        this.scheduler = new Scheduler((phase, phaseEndDate) => {
             console.log(`Phase change: ${this.state.phase} -> ${phase}`);
-            console.log(`Next phase in ${phaseLengthMs} milliseconds`);
             this.state.phase = phase;
-            this.state.phaseLengthMs = phaseLengthMs;
+            this.state.phaseEndDate = phaseEndDate;
             this.dirty = true;
         });
 
         setInterval(() => {
             if (this.dirty) {
-                console.log(`new state: ${JSON.stringify(this.state)}`);
+                // Update phase time left
+                const nowTime = new Date().getTime();
+                const endTime = this.state.phaseEndDate.getTime();
+                this.state.phaseTimeLeftMs = endTime - nowTime;
+
+                // Emit state change
+                console.log(`New state: ${JSON.stringify(this.state)}`);
                 io.emit('state', this.state);
                 this.dirty = false;
             }
