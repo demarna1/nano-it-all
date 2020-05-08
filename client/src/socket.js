@@ -39,6 +39,10 @@ export default () => {
         socket.emit(Event.C2S.LOGOUT);
     }
 
+    function newChat(address, message) {
+        socket.emit(Event.C2S.NEW_CHAT, {address, message});
+    }
+
     return {
         Events: Event.S2C,
         registerHandler,
@@ -46,6 +50,7 @@ export default () => {
         loginAddress,
         loginName,
         loginPassword,
-        logout
+        logout,
+        newChat
     }
 }

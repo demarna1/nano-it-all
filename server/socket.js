@@ -1,5 +1,6 @@
 const { S2C, C2S } = require('../lib/event');
 const Session = require('./session');
+const io = require('./index').io;
 
 module.exports = function(socket) {
 
@@ -41,6 +42,10 @@ module.exports = function(socket) {
 
     socket.on(C2S.LOGOUT, () => {
         socket.session.logout();
+    });
+
+    socket.on(C2S.NEW_CHAT, ({address, message}) => {
+        io.emit(S2C.CHAT_MESSAGE, ({address, message}));
     });
 
     socket.on('disconnect', () => {

@@ -1,6 +1,8 @@
 import React from 'react';
+import Chat from 'components/chat';
 
 export default class Main extends React.Component {
+
     leaveClicked = () => {
         this.props.socket.logout();
     }
@@ -13,6 +15,7 @@ export default class Main extends React.Component {
                     type='button'
                     value='Leave'
                     onClick={this.leaveClicked}/>
+                <Chat socket={this.props.socket} account={this.props.account}/>
             </div>
         );
     }
