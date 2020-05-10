@@ -1,6 +1,6 @@
 import React from 'react';
-import Countdown from 'react-countdown';
 import Address from 'components/address';
+import Header from 'components/header';
 import Name from 'components/name';
 import Main from 'components/main';
 import Password from 'components/password';
@@ -21,16 +21,11 @@ export default class Login extends React.Component {
 
         this.state = {
             loginStatus: this.LoginStatus.PREINIT,
-            gameState: null,
             account: {
                 address: '',
                 name: ''
             }
         };
-    }
-
-    gameStateChange = (gameState) => {
-        this.setState({gameState});
     }
 
     loginSuccess = (account) => {
@@ -64,7 +59,6 @@ export default class Login extends React.Component {
 
     componentDidMount() {
         const {socket} = this.props;
-        socket.registerHandler(socket.Events.STATE_CHANGE, this.gameStateChange);
         socket.registerHandler(socket.Events.LOGIN_SUCCESS, this.loginSuccess);
         socket.registerHandler(socket.Events.LOGIN_VERIFY, this.loginVerify);
         socket.registerHandler(socket.Events.LOGOUT_SUCCESS, this.logoutSuccess);
@@ -73,7 +67,6 @@ export default class Login extends React.Component {
 
     componentWillUnmount() {
         const {socket} = this.props;
-        socket.unregisterHandler(socket.Events.STATE_CHANGE, this.gameStateChange);
         socket.unregisterHandler(socket.Events.LOGIN_SUCCESS, this.loginSuccess);
         socket.unregisterHandler(socket.Events.LOGIN_VERIFY, this.loginVerify);
         socket.unregisterHandler(socket.Events.LOGOUT_SUCCESS, this.logoutSuccess);
@@ -81,12 +74,12 @@ export default class Login extends React.Component {
     }
 
     render() {
-        const {loginStatus, gameState, account} = this.state;
+        const {loginStatus, account} = this.state;
 
         let content;
         switch (loginStatus) {
             case this.LoginStatus.DUPLICATE:
-                content = <div>Session Duplicated</div>
+                content = <div>Account in use: please close other open tabs or log out of other devices.</div>
                 break;
             case this.LoginStatus.LOGGEDOUT:
                 content = <Address socket={this.props.socket} account={account}/>
@@ -108,10 +101,7 @@ export default class Login extends React.Component {
 
         return (
             <div>
-                <h2>Nano-it-all</h2>
-                {gameState &&
-                    <div>Game start: <Countdown date={Date.now() + gameState.phaseTimeLeftMs}/></div>}
-                {gameState && <div>Users online: {gameState.online}</div>}
+                <Header socket={this.props.socket} heading='Nano-it-all'/>
                 {content}
             </div>
         );
