@@ -24,37 +24,46 @@ export default class Login extends React.Component {
             account: {
                 address: '',
                 name: ''
-            }
+            },
+            gameState: null
         };
     }
 
-    loginSuccess = (account) => {
+    loginSuccess = ({gameState, account}) => {
         const loginStatus = account.name
             ? this.LoginStatus.LOGGEDIN
             : this.LoginStatus.PRENAME
         this.setState({
             loginStatus,
-            account
+            account,
+            gameState
         });
     }
 
-    loginVerify = (account) => {
+    loginVerify = ({gameState, account}) => {
         this.setState({
             loginStatus: this.LoginStatus.PREAUTH,
-            account
+            account,
+            gameState
         });
     }
 
-    logoutSuccess = () => {
+    logoutSuccess = (gameState) => {
         this.setState({
-            loginStatus: this.LoginStatus.LOGGEDOUT
+            loginStatus: this.LoginStatus.LOGGEDOUT,
+            gameState
         });
     }
 
-    loginDuplicate = () => {
+    loginDuplicate = (gameState) => {
         this.setState({
-            loginStatus: this.LoginStatus.DUPLICATE
+            loginStatus: this.LoginStatus.DUPLICATE,
+            gameState
         });
+    }
+
+    gameStateChange = (gameState) => {
+        this.setState({gameState});
     }
 
     componentDidMount() {
@@ -63,6 +72,7 @@ export default class Login extends React.Component {
         socket.registerHandler(socket.Events.LOGIN_VERIFY, this.loginVerify);
         socket.registerHandler(socket.Events.LOGOUT_SUCCESS, this.logoutSuccess);
         socket.registerHandler(socket.Events.LOGIN_DUPLICATE, this.loginDuplicate);
+        socket.registerHandler(socket.Events.STATE_CHANGE, this.gameStateChange);
     }
 
     componentWillUnmount() {
@@ -71,39 +81,47 @@ export default class Login extends React.Component {
         socket.unregisterHandler(socket.Events.LOGIN_VERIFY, this.loginVerify);
         socket.unregisterHandler(socket.Events.LOGOUT_SUCCESS, this.logoutSuccess);
         socket.unregisterHandler(socket.Events.LOGIN_DUPLICATE, this.loginDuplicate);
+        socket.unregisterHandler(socket.Events.STATE_CHANGE, this.gameStateChange);
     }
 
     render() {
-        const {loginStatus, account} = this.state;
+        const {loginStatus, account, gameState} = this.state;
 
-        let content;
         switch (loginStatus) {
             case this.LoginStatus.DUPLICATE:
-                content = <div>Account in use: please close other open tabs or log out of other devices.</div>
-                break;
+                return (
+                    <div>
+                        <Header gameState={gameState}/>
+                        <div>Account in use</div>
+                        <div>Please close other open tabs or log out of other devices.</div>
+                    </div>
+                );
             case this.LoginStatus.LOGGEDOUT:
-                content = <Address socket={this.props.socket} account={account}/>
-                break;
+                return (
+                    <div>
+                        <Header gameState={gameState}/>
+                        <Address socket={this.props.socket} account={account}/>
+                    </div>
+                );
             case this.LoginStatus.PRENAME:
-                content = <Name socket={this.props.socket} account={account}/>
-                break;
+                return (
+                    <div>
+                        <Header gameState={gameState}/>
+                        <Name socket={this.props.socket} account={account}/>
+                    </div>
+                );
             case this.LoginStatus.PREAUTH:
-                content = <Password socket={this.props.socket} account={account}/>
-                break;
+                return (
+                    <div>
+                        <Header gameState={gameState}/>
+                        <Password socket={this.props.socket} account={account}/>
+                    </div>
+                );
             case this.LoginStatus.LOGGEDIN:
-                content = <Main socket={this.props.socket} account={account}/>
-                break;
+                return <Main socket={this.props.socket} gameState={gameState} account={account}/>
             case this.LoginStatus.PREINIT:
             default:
-                content = <div></div>;
-                break;
+                return <div>Loading...</div>;
         }
-
-        return (
-            <div>
-                <Header socket={this.props.socket} heading='Nano-it-all'/>
-                {content}
-            </div>
-        );
     }
 }

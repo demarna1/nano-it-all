@@ -1,7 +1,7 @@
 import React from 'react';
-
 import Login from 'components/login';
 import Socket from 'socket';
+import 'styles/header.css'
 
 export default class Root extends React.Component {
 
@@ -19,7 +19,7 @@ export default class Root extends React.Component {
 
     render() {
         return (
-            <div>
+            <div className='wrapper'>
                 {this.state.socket &&
                     <Login socket={this.state.socket}/>
                 }

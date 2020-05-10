@@ -1,46 +1,26 @@
 import React from 'react';
 import Multitimer from 'components/multitimer';
+import {Phase} from 'lib';
 
-import 'styles/header.css'
-
-export default class Header extends React.Component {
-
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            online: 0,
-            remainingTimeMs: -1
-        }
-    }
-
-    gameStateChange = (gameState) => {
-        this.setState({
-            online: gameState.online,
-            remainingTimeMs: gameState.phaseRemainingTimeMs
-        });
-    }
-
-    componentDidMount() {
-        const {socket} = this.props;
-        socket.registerHandler(socket.Events.STATE_CHANGE, this.gameStateChange);
-    }
-
-    componentWillUnmount() {
-        const {socket} = this.props;
-        socket.unregisterHandler(socket.Events.STATE_CHANGE, this.gameStateChange);
-    }
-
-    render() {
-        const {online, remainingTimeMs} = this.state;
-
+const renderTimerContent = (gameState) => {
+    if (gameState.phase === Phase.pregame) {
         return (
-            <div className='wrapper'>
-                <h2>{this.props.heading}</h2>
-                <div>Users online: {online}</div>
+            <div>
                 <h3>Next game starts in:</h3>
-                {remainingTimeMs > 0 && <Multitimer remainingTimeMs={remainingTimeMs}/>}
+                <Multitimer remainingTimeMs={gameState.phaseRemainingTimeMs}/>
             </div>
         );
+    } else {
+        return <h3>Game in progress. Log in to play now!</h3>
     }
+}
+
+export default function Header(props) {
+    return (
+        <div>
+            <h2>Nano-it-all</h2>
+            <div>Users online: {props.gameState.online}</div>
+            {renderTimerContent(props.gameState)}
+        </div>
+    );
 }

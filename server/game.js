@@ -11,26 +11,31 @@ module.exports = class Game {
         // Start the scheduler responsible for phase changes
         this.scheduler = new Scheduler(this.updatePhase);
 
-        // Periodically send out non-critical state updates (e.g. num online)
+        // Periodically broadcast non-critical state updates (e.g. num online)
         setInterval(() => {
             if (this.softUpdate) {
                 this.broadcastState();
             }
-        }, 5000);
+        }, 2000);
     }
 
-    broadcastState = () => {
-        // Update phase time left
+    // Returns the game state
+    getState = () => {
+        // Update phase time left before returning
         const nowTime = new Date().getTime();
         const endTime = this.state.phaseEndDate.getTime();
         this.state.phaseRemainingTimeMs = endTime - nowTime;
+        return this.state;
+    }
 
-        // Emit state change
+    // Emit state change
+    broadcastState = () => {
         console.log(`New state: ${JSON.stringify(this.state)}`);
-        io.emit('state', this.state);
+        io.emit('state', this.getState());
         this.softUpdate = false;
     }
 
+    // Set the game phase and phase duration
     updatePhase = (phase, phaseEndDate) => {
         console.log(`Phase change: ${this.state.phase} -> ${phase}`);
         this.state.phase = phase;
@@ -38,6 +43,7 @@ module.exports = class Game {
         this.broadcastState();
     }
 
+    // Set the number of online connections
     updateOnline = () => {
         this.state.online = io.engine.clientsCount;
         this.softUpdate = true;

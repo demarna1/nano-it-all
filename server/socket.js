@@ -1,8 +1,12 @@
 const { S2C, C2S } = require('../lib/event');
 const Session = require('./session');
+const game = require('./index').game;
 const io = require('./index').io;
 
 module.exports = function(socket) {
+
+    // New socket connection
+    game.updateOnline();
 
     onAddressError = (error) => {
         socket.emit(S2C.ADDRESS_ERROR, error);
@@ -13,19 +17,25 @@ module.exports = function(socket) {
     }
 
     onLoginSuccess = (account) => {
-        socket.emit(S2C.LOGIN_SUCCESS, account);
+        socket.emit(S2C.LOGIN_SUCCESS, {
+            gameState: game.getState(),
+            account
+        });
     }
 
     onLoginVerify = (account) => {
-        socket.emit(S2C.LOGIN_VERIFY, account);
+        socket.emit(S2C.LOGIN_VERIFY, {
+            gameState: game.getState(),
+            account
+        });
     }
 
     onLoginDuplicate = () => {
-        socket.emit(S2C.LOGIN_DUPLICATE);
+        socket.emit(S2C.LOGIN_DUPLICATE, game.getState());
     }
 
     onLogoutSuccess = () => {
-        socket.emit(S2C.LOGOUT_SUCCESS);
+        socket.emit(S2C.LOGOUT_SUCCESS, game.getState());
     }
 
     socket.on(C2S.LOGIN_ADDRESS, (address) => {
@@ -49,6 +59,7 @@ module.exports = function(socket) {
     });
 
     socket.on('disconnect', () => {
+        game.updateOnline();
         socket.session.disconnect();
     });
 

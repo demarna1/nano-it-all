@@ -1,7 +1,6 @@
 const bcrypt = require('bcrypt');
 const { Op } = require("sequelize");
 const models = require('./models');
-const game = require('./index').game;
 const io = require('./index').io;
 
 module.exports = class Session {
@@ -10,8 +9,6 @@ module.exports = class Session {
     // their session if it's available. For example, we'll need to restore
     // the session when the user refreshes the page.
     constructor(sid, token, cb) {
-        game.updateOnline();
-
         this.account = null;
         this.sid = sid;
         this.token = token;
@@ -142,7 +139,6 @@ module.exports = class Session {
     // Socket is about to close (e.g. browser closed), so unlink the account
     // from this socket.
     disconnect() {
-        game.updateOnline();
         if (this.account) {
             this.account.sid = null;
             this.account.save();
