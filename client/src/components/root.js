@@ -1,7 +1,7 @@
 import React from 'react';
 import Login from 'components/login';
 import Socket from 'socket';
-import 'styles/header.css'
+import 'styles/app.css'
 
 export default class Root extends React.Component {
 

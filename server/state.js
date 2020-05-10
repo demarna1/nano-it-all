@@ -7,5 +7,7 @@ module.exports = class State {
         this.phase = Phase.pregame;
         this.phaseEndDate = null;
         this.phaseRemainingTimeMs = 0;
+        this.round = 0;
+        this.question = 0;
     }
 }

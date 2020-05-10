@@ -18,8 +18,8 @@ const renderTimerContent = (gameState) => {
 export default function Header(props) {
     return (
         <div>
+            <div className='online'>Users online: {props.gameState.online}</div>
             <h2>Nano-it-all</h2>
-            <div>Users online: {props.gameState.online}</div>
             {renderTimerContent(props.gameState)}
         </div>
     );
