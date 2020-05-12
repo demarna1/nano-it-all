@@ -1,5 +1,6 @@
 import React from 'react';
 import Chat from 'components/chat';
+import Timer from 'components/timer';
 import Multitimer from 'components/multitimer';
 import {Phase} from 'lib';
 
@@ -34,6 +35,7 @@ export default class Main extends React.Component {
                 return (
                     <div>
                         <h2>Question {gameState.question}</h2>
+                        <Timer remainingTimeMs={gameState.phaseRemainingTimeMs}/>
                         <div>Question TBD</div>
                     </div>
                 );
@@ -60,7 +62,7 @@ export default class Main extends React.Component {
         return (
             <div>
                 <input
-                    className='logoutButton'
+                    className='logout-button'
                     type='button'
                     value='Leave'
                     onClick={this.leaveClicked}/>

@@ -2,7 +2,7 @@
     text-align: center;
 }
 
-.logoutButton {
+.logout-button {
     float: left;
 }
 
@@ -10,7 +10,7 @@
     text-align: right;
 }
 
-.multitimer {
+.timer-wrapper {
     display: flex;
     justify-content: center;
     font-family: sans-serif;

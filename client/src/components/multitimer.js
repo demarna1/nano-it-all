@@ -31,7 +31,7 @@ export default function Multitimer(props) {
   const daysDuration = 7 * daySeconds;
 
   return (
-    <div className="multitimer">
+    <div className="timer-wrapper">
       <CountdownCircleTimer
         {...timerProps}
         colors={[["#000000"]]}
