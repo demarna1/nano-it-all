@@ -1,7 +1,6 @@
 import io from "socket.io-client";
 import { v4 as uuidv4 } from 'uuid';
 import { Event } from 'lib';
-import SOCKET_URL from "config";
 
 export default () => {
     let token = localStorage.getItem('nanoitall-token');
@@ -10,7 +9,12 @@ export default () => {
         localStorage.setItem('nanoitall-token', token);
     }
 
-    const socket = io(SOCKET_URL, { query: `token=${token}` });
+    let url = 'http://localhost:3001';
+    if (process.env.NODE_ENV === 'production') {
+        url = window.location.href;
+    }
+
+    const socket = io(url, { query: `token=${token}` });
     socket.on('connect', () => {
         console.log('SIO connection established');
     });
