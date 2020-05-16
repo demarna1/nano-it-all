@@ -1,6 +1,8 @@
 const Scheduler = require('./scheduler');
 const State = require('./state');
 const Phase = require('../lib/phase');
+const { Op } = require("sequelize");
+const models = require('./models');
 const io = require('./index').io;
 
 module.exports = class Game {
@@ -11,7 +13,9 @@ module.exports = class Game {
 
         // Start the scheduler responsible for phase changes
         this.scheduler = new Scheduler((phase, phaseEndDate) => {
-            this.updatePhase(phase, phaseEndDate);
+            this.updatePhase(phase, phaseEndDate).then(() => {
+                this.broadcastState();
+            });
         });
 
         // Periodically broadcast non-critical state updates (e.g. num online)
@@ -38,8 +42,34 @@ module.exports = class Game {
         this.softUpdate = false;
     }
 
-    updatePhase(phase, phaseEndDate) {
-        console.log(`Phase change: ${this.state.phase} -> ${phase}`);
+    shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    async getQuestionData(round) {
+        const question = await models.Question.findOne({
+            where: {
+                [Op.and]: [{ round }, { asked: false }]
+            }
+        });
+
+        // TODO: if question is null, reset all 'asked' to false
+
+        const rightanswers = question.rightanswers.split(',');
+        const wronganswers = question.wronganswers.split(',');
+        const choices = [...rightanswers, ...wronganswers];
+        this.shuffleArray(choices);
+
+        question.asked = true;
+        question.save();
+
+        return { question: question.question, choices };
+    }
+
+    async updatePhase(phase, phaseEndDate) {
         this.state.phase = phase;
         this.state.phaseEndDate = phaseEndDate;
 
@@ -47,9 +77,8 @@ module.exports = class Game {
             this.state.round++;
         } else if (phase == Phase.question) {
             this.state.question++;
+            this.state.data = await this.getQuestionData(this.state.round);
         }
-
-        this.broadcastState();
     }
 
     // Set the number of online connections

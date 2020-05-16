@@ -28,7 +28,7 @@ export default class Main extends React.Component {
                 return (
                     <div>
                         <h2>Round {gameState.round}</h2>
-                        <div>Pick 3 answers</div>
+                        <div>Pick 2 answers</div>
                     </div>
                 );
             case Phase.question:
@@ -36,7 +36,7 @@ export default class Main extends React.Component {
                     <div>
                         <h2>Question {gameState.question}</h2>
                         <Timer remainingTimeMs={gameState.phaseRemainingTimeMs}/>
-                        <div>Question TBD</div>
+                        <div>{gameState.data.question}</div>
                     </div>
                 );
             case Phase.waitAnswer:

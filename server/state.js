@@ -9,5 +9,6 @@ module.exports = class State {
         this.phaseRemainingTimeMs = 0;
         this.round = 0;
         this.question = 0;
+        this.data = {}
     }
 }

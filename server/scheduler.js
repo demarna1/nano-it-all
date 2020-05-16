@@ -5,9 +5,11 @@ module.exports = class Scheduler {
 
     constructor(cb) {
         this.cb = cb;
-        const date = new Date(2020, 4, 17, 20, 0, 0);
-        this.cb(Phase.pregame, date);
-        schedule.scheduleJob(date, this.startGame);
+        //const date = new Date(2020, 4, 16, 18, 55, 0);
+        //this.cb(Phase.pregame, date);
+        //schedule.scheduleJob(date, this.startGame);
+
+        this.startGame();
     }
 
     // 6-second start game transition
