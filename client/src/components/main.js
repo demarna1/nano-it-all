@@ -32,11 +32,17 @@ export default class Main extends React.Component {
                     </div>
                 );
             case Phase.question:
+                const {question, choices} = gameState.data;
                 return (
                     <div>
                         <h2>Question {gameState.question}</h2>
                         <Timer remainingTimeMs={gameState.phaseRemainingTimeMs}/>
-                        <div>{gameState.data.question}</div>
+                        <div>{question}</div>
+                        <div>{choices[0]}</div>
+                        <div>{choices[1]}</div>
+                        <div>{choices[2]}</div>
+                        <div>{choices[3]}</div>
+                        <div>{choices[4]}</div>
                     </div>
                 );
             case Phase.waitAnswer:
@@ -44,6 +50,14 @@ export default class Main extends React.Component {
                     <div>
                         <h2>Question {gameState.question}</h2>
                         <div>Times Up!</div>
+                    </div>
+                );
+            case Phase.showAnswer:
+                return (
+                    <div>
+                        <h2>Question {gameState.question}</h2>
+                        <div>Answers:</div>
+                        <div>TODO</div>
                     </div>
                 );
             case Phase.pregame:

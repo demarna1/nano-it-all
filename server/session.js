@@ -1,5 +1,4 @@
 const bcrypt = require('bcrypt');
-const { Op } = require("sequelize");
 const models = require('./models');
 const io = require('./index').io;
 
@@ -85,7 +84,8 @@ module.exports = class Session {
     setName(address, name) {
         models.Account.findOne({
             where: {
-                [Op.and]: [{ address }, { sid: this.sid }]
+                address,
+                sid: this.sid
             }
         }).then((account) => {
             if (account) {

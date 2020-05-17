@@ -37,5 +37,13 @@ module.exports = class Scheduler {
     startWaitAnswer = () => {
         const now = new Date();
         this.cb(Phase.waitAnswer, new Date(now.getTime() + 2000));
+        setTimeout(this.startShowAnswer, 2000);
+    }
+
+    // 4 seconds until we show the next question
+    startShowAnswer = () => {
+        const now = new Date();
+        this.cb(Phase.showAnswer, new Date(now.getTime() + 4000));
+        setTimeout(this.startQuestion, 4000);
     }
 }
