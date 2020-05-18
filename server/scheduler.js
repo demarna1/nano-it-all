@@ -5,11 +5,9 @@ module.exports = class Scheduler {
 
     constructor(cb) {
         this.cb = cb;
-        //const date = new Date(2020, 4, 16, 18, 55, 0);
-        //this.cb(Phase.pregame, date);
-        //schedule.scheduleJob(date, this.startGame);
-
-        this.startGame();
+        const date = new Date(2020, 4, 24, 20, 0, 0);
+        this.cb(Phase.pregame, date);
+        schedule.scheduleJob(date, this.startGame);
     }
 
     // 6-second start game transition
@@ -44,6 +42,6 @@ module.exports = class Scheduler {
     startShowAnswer = () => {
         const now = new Date();
         this.cb(Phase.showAnswer, new Date(now.getTime() + 4000));
-        setTimeout(this.startQuestion, 4000);
+        //setTimeout(this.startQuestion, 4000);
     }
 }
