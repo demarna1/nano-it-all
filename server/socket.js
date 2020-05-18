@@ -17,6 +17,7 @@ module.exports = function(socket) {
     }
 
     onLoginSuccess = (account) => {
+        game.addPlayer(socket.session.account);
         socket.emit(S2C.LOGIN_SUCCESS, {
             gameState: game.getState(),
             account
@@ -38,6 +39,10 @@ module.exports = function(socket) {
         socket.emit(S2C.LOGOUT_SUCCESS, game.getState());
     }
 
+    onAnswerResponse = (response) => {
+        socket.emit(S2C.ANSWER_RESPONSE, response);
+    }
+
     socket.on(C2S.LOGIN_ADDRESS, (address) => {
         socket.session.login(address, null);
     });
@@ -51,6 +56,7 @@ module.exports = function(socket) {
     });
 
     socket.on(C2S.LOGOUT, () => {
+        game.removePlayer(socket.session.account);
         socket.session.logout();
     });
 
@@ -59,11 +65,12 @@ module.exports = function(socket) {
     });
 
     socket.on(C2S.SUBMIT_ANSWER, (answer) => {
-        console.log(`Received answer ${answer} from ${socket.id}`);
+        game.recordAnswer(socket.session.account, answer, onAnswerResponse);
     });
 
     socket.on('disconnect', () => {
         game.updateOnline();
+        game.disconnectPlayer(socket.session.account);
         socket.session.disconnect();
     });
 

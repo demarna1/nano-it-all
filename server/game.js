@@ -1,4 +1,5 @@
 const Phase = require('../lib/phase');
+const Player = require('./player');
 const QReader = require('./qreader');
 const Scheduler = require('./scheduler');
 const State = require('./state');
@@ -8,6 +9,7 @@ module.exports = class Game {
 
     constructor() {
         this.state = new State();
+        this.players = {};
         this.qReader = new QReader();
         this.softUpdate = false;
 
@@ -57,5 +59,26 @@ module.exports = class Game {
     updateOnline() {
         this.state.online = io.engine.clientsCount;
         this.softUpdate = true;
+    }
+
+    addPlayer(account) {
+        if (this.players.hasOwnProperty(account.id)) {
+            this.players[account.id].sid = account.sid;
+        } else {
+            this.players[account.id] = new Player(account);
+        }
+    }
+
+    removePlayer(account) {
+        delete this.players[account.id];
+    }
+
+    disconnectPlayer(account) {
+        this.players[account.id].sid = null;
+    }
+
+    recordAnswer(account, answer, onReponse) {
+        const right = this.qReader.isRightAnswer(answer);
+        onReponse({answer, right});
     }
 }

@@ -3,44 +3,62 @@ import Timer from 'components/timer';
 
 export default class Question extends React.Component {
 
-    choice0Clicked = () => {
-        const {socket, data} = this.props;
-        socket.submitAnswer(data.choices[0]);
+    constructor(props) {
+        super(props);
+
+        const answerClassNames = [];
+        for (let i = 0; i < this.props.data.choices.length; i++) {
+            answerClassNames.push('answer-initial');
+        }
+
+        this.state = {
+            awaitingResponse: false,
+            answerClassNames
+        };
     }
 
-    choice1Clicked = () => {
+    choiceClicked = (index) => {
         const {socket, data} = this.props;
-        socket.submitAnswer(data.choices[1]);
+        socket.submitAnswer(data.choices[index]);
+        this.setState({awaitingResponse: true});
     }
 
-    choice2Clicked = () => {
-        const {socket, data} = this.props;
-        socket.submitAnswer(data.choices[2]);
+    answerResponse = ({answer, right}) => {
+        const {answerClassNames} = this.state;
+        const index = this.props.data.choices.indexOf(answer);
+        answerClassNames[index] = right ? 'answer-right' : 'answer-wrong';
+        this.setState({awaitingResponse: false, answerClassNames});
     }
 
-    choice3Clicked = () => {
-        const {socket, data} = this.props;
-        socket.submitAnswer(data.choices[3]);
+    componentDidMount() {
+        const {socket} = this.props;
+        socket.registerHandler(socket.Events.ANSWER_RESPONSE, this.answerResponse);
     }
 
-    choice4Clicked = () => {
-        const {socket, data} = this.props;
-        socket.submitAnswer(data.choices[4]);
+    componentWillUnmount() {
+        const {socket} = this.props;
+        socket.unregisterHandler(socket.Events.ANSWER_RESPONSE, this.answerResponse);
     }
 
     render() {
         const {question, choices} = this.props.data;
+        const {awaitingResponse, answerClassNames} = this.state;
 
         return (
             <div>
                 <h2>Question {this.props.number}</h2>
                 <Timer remainingTimeMs={this.props.remainingTimeMs}/>
                 <div>{question}</div>
-                <input type='button' value={choices[0]} onClick={this.choice0Clicked}/>
-                <input type='button' value={choices[1]} onClick={this.choice1Clicked}/>
-                <input type='button' value={choices[2]} onClick={this.choice2Clicked}/>
-                <input type='button' value={choices[3]} onClick={this.choice3Clicked}/>
-                <input type='button' value={choices[4]} onClick={this.choice4Clicked}/>
+                {choices.map((choice, index) =>
+                    <input
+                        key={index}
+                        type='button'
+                        className={answerClassNames[index]}
+                        value={choice}
+                        onClick={() => this.choiceClicked(index)}
+                        disabled={awaitingResponse ||
+                            answerClassNames[index] !== 'answer-initial'}/>
+                )}
             </div>
         );
     }

@@ -20,3 +20,11 @@
 .time {
     font-size: 22px;
 }
+
+.answer-right {
+    color: green;
+}
+
+.answer-wrong {
+    color: red;
+}

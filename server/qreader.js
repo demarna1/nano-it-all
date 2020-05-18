@@ -5,6 +5,7 @@ module.exports = class QReader {
     // Initialize the next array. By doing the database queries now,
     // we can return the next question immediately when requested.
     constructor() {
+        this.current = null;
         this.next = [null, null, null];
         for (let round = 1; round < 4; round++) {
             this.readNext(round);
@@ -48,11 +49,21 @@ module.exports = class QReader {
             this.readNext(round);
         });
 
-        const rightanswers = question.rightanswers.split(',');
-        const wronganswers = question.wronganswers.split(',');
+        let rightanswers = question.rightanswers.split(',');
+        let wronganswers = question.wronganswers.split(',');
+        if (wronganswers[0] === '') {
+            wronganswers = [];
+        }
+
+        this.current = { rightanswers, wronganswers };
+
         const choices = [...rightanswers, ...wronganswers];
         this.shuffleArray(choices);
 
         return { question: question.question, choices };
+    }
+
+    isRightAnswer(answer) {
+        return this.current && this.current.rightanswers.indexOf(answer) > -1;
     }
 }
