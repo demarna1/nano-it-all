@@ -1,7 +1,7 @@
 import React from 'react';
 import Chat from 'components/chat';
-import Timer from 'components/timer';
 import Multitimer from 'components/multitimer';
+import Question from 'components/question';
 import {Phase} from 'lib';
 
 export default class Main extends React.Component {
@@ -19,9 +19,9 @@ export default class Main extends React.Component {
                     <div>
                         <h2>Game is starting!</h2>
                         <div>There will be 3 rounds:</div>
-                        <div>Match 2 Round</div>
+                        <div>Pick 2 Round</div>
                         <div>Speed Round</div>
-                        <div>Match 3 Round</div>
+                        <div>Rankings Round</div>
                     </div>
                 );
             case Phase.round:
@@ -32,18 +32,12 @@ export default class Main extends React.Component {
                     </div>
                 );
             case Phase.question:
-                const {question, choices} = gameState.data;
                 return (
-                    <div>
-                        <h2>Question {gameState.question}</h2>
-                        <Timer remainingTimeMs={gameState.phaseRemainingTimeMs}/>
-                        <div>{question}</div>
-                        <div>{choices[0]}</div>
-                        <div>{choices[1]}</div>
-                        <div>{choices[2]}</div>
-                        <div>{choices[3]}</div>
-                        <div>{choices[4]}</div>
-                    </div>
+                    <Question
+                        socket={this.props.socket}
+                        remainingTimeMs={gameState.phaseRemainingTimeMs}
+                        number={gameState.question}
+                        data={gameState.data}/>
                 );
             case Phase.waitAnswer:
                 return (

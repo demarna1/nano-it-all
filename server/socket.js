@@ -58,6 +58,10 @@ module.exports = function(socket) {
         io.emit(S2C.CHAT_MESSAGE, ({address, message}));
     });
 
+    socket.on(C2S.SUBMIT_ANSWER, (answer) => {
+        console.log(`Received answer ${answer} from ${socket.id}`);
+    });
+
     socket.on('disconnect', () => {
         game.updateOnline();
         socket.session.disconnect();

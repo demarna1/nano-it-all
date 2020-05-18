@@ -1,4 +1,4 @@
-import io from "socket.io-client";
+import io from 'socket.io-client';
 import { v4 as uuidv4 } from 'uuid';
 import { Event } from 'lib';
 
@@ -47,6 +47,10 @@ export default () => {
         socket.emit(Event.C2S.NEW_CHAT, {address, message});
     }
 
+    function submitAnswer(answer) {
+        socket.emit(Event.C2S.SUBMIT_ANSWER, answer);
+    }
+
     return {
         Events: Event.S2C,
         registerHandler,
@@ -55,6 +59,7 @@ export default () => {
         loginName,
         loginPassword,
         logout,
-        newChat
+        newChat,
+        submitAnswer
     }
 }
