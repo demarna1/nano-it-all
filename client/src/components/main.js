@@ -31,6 +31,12 @@ export default class Main extends React.Component {
                         <div>Pick 2 answers</div>
                     </div>
                 );
+            case Phase.prequestion:
+                return (
+                    <div>
+                        <h2>Question {gameState.question}</h2>
+                    </div>
+                );
             case Phase.question:
                 return (
                     <Question
@@ -39,19 +45,25 @@ export default class Main extends React.Component {
                         number={gameState.question}
                         data={gameState.data}/>
                 );
-            case Phase.waitAnswer:
+            case Phase.postquestion:
                 return (
                     <div>
                         <h2>Question {gameState.question}</h2>
                         <div>Times Up!</div>
                     </div>
                 );
-            case Phase.showAnswer:
+            case Phase.answer:
                 return (
                     <div>
                         <h2>Question {gameState.question}</h2>
                         <div>Answers:</div>
                         <div>TODO</div>
+                    </div>
+                );
+            case Phase.postgame:
+                return (
+                    <div>
+                        <h2>Game Over!</h2>
                     </div>
                 );
             case Phase.pregame:

@@ -14,8 +14,8 @@ module.exports = class Game {
         this.softUpdate = false;
 
         // Start the scheduler responsible for phase changes
-        this.scheduler = new Scheduler((phase, phaseEndDate) => {
-            this.updatePhase(phase, phaseEndDate);
+        this.scheduler = new Scheduler((phase, phaseEndDate, round, question) => {
+            this.updatePhase(phase, phaseEndDate, round, question);
             this.broadcastState();
         });
 
@@ -43,14 +43,13 @@ module.exports = class Game {
         this.softUpdate = false;
     }
 
-    updatePhase(phase, phaseEndDate) {
+    updatePhase(phase, phaseEndDate, round, question) {
         this.state.phase = phase;
         this.state.phaseEndDate = phaseEndDate;
+        this.state.round = round;
+        this.state.question = question;
 
-        if (phase === Phase.round) {
-            this.state.round++;
-        } else if (phase == Phase.question) {
-            this.state.question++;
+        if (phase == Phase.question) {
             this.state.data = this.qReader.nextQuestion(this.state.round);
         }
     }
