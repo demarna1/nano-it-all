@@ -6,35 +6,65 @@ export default class Question extends React.Component {
     constructor(props) {
         super(props);
 
+        this.ChoiceState = Object.freeze({
+            INITIAL: 'answer-initial',
+            RIGHT: 'answer-right',
+            WRONG: 'answer-wrong'
+        });
+
+        const choiceStates = {};
+        for (let i = 0; i < props.gameState.data.choices.length; i++) {
+            choiceStates[props.gameState.data.choices[i]] = this.ChoiceState.INITIAL;
+        }
+
+        this.updateChoiceStates(choiceStates, props.playerState);
+
         this.state = {
             awaitingResponse: false,
-            rightAnswers: props.playerState.rightAnswers,
-            wrongAnswers: props.playerState.wrongAnswers
+            isFinishedAnswering: this.isFinishedAnswering(choiceStates),
+            choiceStates
         };
     }
 
-    choiceClicked = (index) => {
-        const {socket, data} = this.props;
-        socket.submitAnswer(data.choices[index]);
+    updateChoiceStates(choiceStates, playerState) {
+        for (let i = 0; i < playerState.rightAnswers.length; i++) {
+            choiceStates[playerState.rightAnswers[i]] = this.ChoiceState.RIGHT;
+        }
+        for (let i = 0; i < playerState.wrongAnswers.length; i++) {
+            choiceStates[playerState.wrongAnswers[i]] = this.ChoiceState.WRONG;
+        }
+    }
+
+    isFinishedAnswering(choiceStates) {
+        const maxAnswers = this.props.gameState.round === 1 ? 2 : 1;
+        let currentAnswers = 0;
+        for (const choice in choiceStates) {
+            if (choiceStates[choice] !== this.ChoiceState.INITIAL)
+                currentAnswers++;
+        }
+        return currentAnswers >= maxAnswers;
+    }
+
+    choiceClicked = (choice) => {
+        this.props.socket.submitAnswer(choice);
         this.setState({awaitingResponse: true});
     }
 
     answerResponse = (playerState) => {
+        const choiceStates = { ...this.state.choiceStates }; // make a copy
+        this.updateChoiceStates(choiceStates, playerState);
+
         this.setState({
             awaitingResponse: false,
-            rightAnswers: playerState.rightAnswers,
-            wrongAnswers: playerState.wrongAnswers
+            isFinishedAnswering: this.isFinishedAnswering(choiceStates),
+            choiceStates
         });
     }
 
-    getAnswerClassName(choice) {
-        if (this.state.rightAnswers.indexOf(choice) > -1) {
-            return 'answer-right';
-        } else if (this.state.wrongAnswers.indexOf(choice) > -1) {
-            return 'answer-wrong';
-        } else {
-            return 'answer-initial';
-        }
+    getDisabled(choice) {
+        return this.state.awaitingResponse ||
+            this.state.isFinishedAnswering ||
+            this.state.choiceStates[choice] !== this.ChoiceState.INITIAL;
     }
 
     componentDidMount() {
@@ -48,23 +78,21 @@ export default class Question extends React.Component {
     }
 
     render() {
-        const {question, choices} = this.props.data;
-        const {awaitingResponse, answerClassNames} = this.state;
+        const {question, phaseRemainingTimeMs, data} = this.props.gameState;
 
         return (
             <div>
-                <h2>Question {this.props.number}</h2>
-                <Timer remainingTimeMs={this.props.remainingTimeMs}/>
-                <div>{question}</div>
-                {choices.map((choice, index) =>
+                <h2>Question {question}</h2>
+                <Timer remainingTimeMs={phaseRemainingTimeMs}/>
+                <div>{data.question}</div>
+                {data.choices.map((choice, index) =>
                     <input
                         key={index}
                         type='button'
-                        className={this.getAnswerClassName(choice)}
+                        className={this.state.choiceStates[choice]}
                         value={choice}
-                        onClick={() => this.choiceClicked(index)}
-                        disabled={awaitingResponse ||
-                            this.getAnswerClassName(choice) !== 'answer-initial'}/>
+                        onClick={() => this.choiceClicked(choice)}
+                        disabled={this.getDisabled(choice)}/>
                 )}
             </div>
         );

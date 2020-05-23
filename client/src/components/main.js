@@ -12,7 +12,7 @@ export default class Main extends React.Component {
     }
 
     renderGameContent() {
-        const {gameState} = this.props;
+        const {gameState, playerState} = this.props;
 
         switch (gameState.phase) {
             case Phase.starting:
@@ -36,10 +36,8 @@ export default class Main extends React.Component {
             case Phase.question:
                 return <Question
                     socket={this.props.socket}
-                    remainingTimeMs={gameState.phaseRemainingTimeMs}
-                    number={gameState.question}
-                    data={gameState.data}
-                    playerState={this.props.playerState}/>
+                    gameState={gameState}
+                    playerState={playerState}/>
             case Phase.postquestion:
                 return (
                     <div>
@@ -67,7 +65,7 @@ export default class Main extends React.Component {
                     <div>
                         <h3>Next game starts in:</h3>
                         <Multitimer remainingTimeMs={gameState.phaseRemainingTimeMs}/>
-                        <div>Hello {this.props.playerState.name}</div>
+                        <div>Hello {playerState.name}</div>
                     </div>
                 );
         }
