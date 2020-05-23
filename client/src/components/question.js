@@ -6,14 +6,10 @@ export default class Question extends React.Component {
     constructor(props) {
         super(props);
 
-        const answerClassNames = [];
-        for (let i = 0; i < this.props.data.choices.length; i++) {
-            answerClassNames.push('answer-initial');
-        }
-
         this.state = {
             awaitingResponse: false,
-            answerClassNames
+            rightAnswers: props.playerState.rightAnswers,
+            wrongAnswers: props.playerState.wrongAnswers
         };
     }
 
@@ -23,11 +19,22 @@ export default class Question extends React.Component {
         this.setState({awaitingResponse: true});
     }
 
-    answerResponse = ({answer, right}) => {
-        const {answerClassNames} = this.state;
-        const index = this.props.data.choices.indexOf(answer);
-        answerClassNames[index] = right ? 'answer-right' : 'answer-wrong';
-        this.setState({awaitingResponse: false, answerClassNames});
+    answerResponse = (playerState) => {
+        this.setState({
+            awaitingResponse: false,
+            rightAnswers: playerState.rightAnswers,
+            wrongAnswers: playerState.wrongAnswers
+        });
+    }
+
+    getAnswerClassName(choice) {
+        if (this.state.rightAnswers.indexOf(choice) > -1) {
+            return 'answer-right';
+        } else if (this.state.wrongAnswers.indexOf(choice) > -1) {
+            return 'answer-wrong';
+        } else {
+            return 'answer-initial';
+        }
     }
 
     componentDidMount() {
@@ -53,11 +60,11 @@ export default class Question extends React.Component {
                     <input
                         key={index}
                         type='button'
-                        className={answerClassNames[index]}
+                        className={this.getAnswerClassName(choice)}
                         value={choice}
                         onClick={() => this.choiceClicked(index)}
                         disabled={awaitingResponse ||
-                            answerClassNames[index] !== 'answer-initial'}/>
+                            this.getAnswerClassName(choice) !== 'answer-initial'}/>
                 )}
             </div>
         );

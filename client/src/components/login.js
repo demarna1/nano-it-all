@@ -25,25 +25,30 @@ export default class Login extends React.Component {
                 address: '',
                 name: ''
             },
-            gameState: null
+            gameState: null,
+            playerState: null
         };
     }
 
-    loginSuccess = ({gameState, account}) => {
-        const loginStatus = account.name
+    loginSuccess = ({gameState, playerState}) => {
+        const loginStatus = playerState.name
             ? this.LoginStatus.LOGGEDIN
             : this.LoginStatus.PRENAME
         this.setState({
             loginStatus,
-            account,
-            gameState
+            account: {
+                address: playerState.address,
+                name: playerState.name
+            },
+            gameState,
+            playerState
         });
     }
 
-    loginVerify = ({gameState, account}) => {
+    loginVerify = ({gameState, address, name}) => {
         this.setState({
             loginStatus: this.LoginStatus.PREAUTH,
-            account,
+            account: { address, name },
             gameState
         });
     }
@@ -85,7 +90,7 @@ export default class Login extends React.Component {
     }
 
     render() {
-        const {loginStatus, account, gameState} = this.state;
+        const {loginStatus, account, gameState, playerState} = this.state;
 
         switch (loginStatus) {
             case this.LoginStatus.DUPLICATE:
@@ -118,7 +123,7 @@ export default class Login extends React.Component {
                     </div>
                 );
             case this.LoginStatus.LOGGEDIN:
-                return <Main socket={this.props.socket} gameState={gameState} account={account}/>
+                return <Main socket={this.props.socket} gameState={gameState} playerState={playerState}/>
             case this.LoginStatus.PREINIT:
             default:
                 return <div>Loading...</div>;

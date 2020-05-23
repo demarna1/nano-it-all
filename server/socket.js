@@ -17,17 +17,18 @@ module.exports = function(socket) {
     }
 
     onLoginSuccess = (account) => {
-        game.addPlayer(socket.session.account);
+        game.scorekeeper.addPlayer(account);
         socket.emit(S2C.LOGIN_SUCCESS, {
             gameState: game.getState(),
-            account
+            playerState: game.scorekeeper.getPlayer(account)
         });
     }
 
     onLoginVerify = (account) => {
         socket.emit(S2C.LOGIN_VERIFY, {
             gameState: game.getState(),
-            account
+            address: account.address,
+            name: account.name
         });
     }
 
@@ -39,8 +40,8 @@ module.exports = function(socket) {
         socket.emit(S2C.LOGOUT_SUCCESS, game.getState());
     }
 
-    onAnswerResponse = (response) => {
-        socket.emit(S2C.ANSWER_RESPONSE, response);
+    onAnswerResponse = (playerState) => {
+        socket.emit(S2C.ANSWER_RESPONSE, playerState);
     }
 
     socket.on(C2S.LOGIN_ADDRESS, (address) => {
@@ -56,7 +57,7 @@ module.exports = function(socket) {
     });
 
     socket.on(C2S.LOGOUT, () => {
-        game.removePlayer(socket.session.account);
+        game.scorekeeper.removePlayer(socket.session.account);
         socket.session.logout();
     });
 
@@ -70,8 +71,10 @@ module.exports = function(socket) {
 
     socket.on('disconnect', () => {
         game.updateOnline();
-        game.disconnectPlayer(socket.session.account);
-        socket.session.disconnect();
+        if (socket.session.account) {
+            game.scorekeeper.disconnectPlayer(socket.session.account);
+            socket.session.disconnect();
+        }
     });
 
     socket.session = new Session(

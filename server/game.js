@@ -1,7 +1,7 @@
 const Phase = require('../lib/phase');
-const Player = require('./player');
 const QReader = require('./qreader');
 const Scheduler = require('./scheduler');
+const Scorekeeper = require('./scorekeeper');
 const State = require('./state');
 const io = require('./index').io;
 
@@ -9,8 +9,8 @@ module.exports = class Game {
 
     constructor() {
         this.state = new State();
-        this.players = {};
         this.qReader = new QReader();
+        this.scorekeeper = new Scorekeeper();
         this.softUpdate = false;
 
         // Start the scheduler responsible for phase changes
@@ -51,6 +51,7 @@ module.exports = class Game {
 
         if (phase == Phase.question) {
             this.state.data = this.qReader.nextQuestion(this.state.round);
+            this.scorekeeper.resetAnswers();
         }
     }
 
@@ -60,24 +61,9 @@ module.exports = class Game {
         this.softUpdate = true;
     }
 
-    addPlayer(account) {
-        if (this.players.hasOwnProperty(account.id)) {
-            this.players[account.id].sid = account.sid;
-        } else {
-            this.players[account.id] = new Player(account);
-        }
-    }
-
-    removePlayer(account) {
-        delete this.players[account.id];
-    }
-
-    disconnectPlayer(account) {
-        this.players[account.id].sid = null;
-    }
-
     recordAnswer(account, answer, onReponse) {
         const right = this.qReader.isRightAnswer(answer);
-        onReponse({answer, right});
+        const playerState = this.scorekeeper.addAnswer(account, answer, right);
+        onReponse(playerState);
     }
 }

@@ -121,9 +121,10 @@ module.exports = class Session {
     finishLogin(account) {
         account.sid = this.sid;
         account.token = this.token;
-        account.save();
-        this.account = account;
-        this.cb.onLoginSuccess(account);
+        account.save().then(() => {
+            this.account = account;
+            this.cb.onLoginSuccess(account);
+        });
     }
 
     // Unlink the current account from this socket and user token (frees it
@@ -139,9 +140,7 @@ module.exports = class Session {
     // Socket is about to close (e.g. browser closed), so unlink the account
     // from this socket.
     disconnect() {
-        if (this.account) {
-            this.account.sid = null;
-            this.account.save();
-        }
+        this.account.sid = null;
+        this.account.save();
     }
 }

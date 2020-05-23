@@ -6,11 +6,11 @@ import 'react-chat-widget/lib/styles.css';
 export default class Chat extends React.Component {
 
     handleUserMessage = (message) => {
-        this.props.socket.newChat(this.props.account.address, message);
+        this.props.socket.newChat(this.props.address, message);
     }
 
     chatMessage = ({address, message}) => {
-        if (address !== this.props.account.address) {
+        if (address !== this.props.address) {
             addResponseMessage(message);
         }
     }

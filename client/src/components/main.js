@@ -2,6 +2,7 @@ import React from 'react';
 import Chat from 'components/chat';
 import Multitimer from 'components/multitimer';
 import Question from 'components/question';
+import Round from 'components/round';
 import {Phase} from 'lib';
 
 export default class Main extends React.Component {
@@ -19,18 +20,13 @@ export default class Main extends React.Component {
                     <div>
                         <h2>Game is starting!</h2>
                         <div>There will be 3 rounds:</div>
-                        <div>Pick 2 Round</div>
+                        <div>Warmup Round</div>
                         <div>Speed Round</div>
-                        <div>Rankings Round</div>
+                        <div>Ranking Round</div>
                     </div>
                 );
             case Phase.round:
-                return (
-                    <div>
-                        <h2>Round {gameState.round}</h2>
-                        <div>Pick 2 answers</div>
-                    </div>
-                );
+                return <Round number={gameState.round}/>
             case Phase.prequestion:
                 return (
                     <div>
@@ -38,13 +34,12 @@ export default class Main extends React.Component {
                     </div>
                 );
             case Phase.question:
-                return (
-                    <Question
-                        socket={this.props.socket}
-                        remainingTimeMs={gameState.phaseRemainingTimeMs}
-                        number={gameState.question}
-                        data={gameState.data}/>
-                );
+                return <Question
+                    socket={this.props.socket}
+                    remainingTimeMs={gameState.phaseRemainingTimeMs}
+                    number={gameState.question}
+                    data={gameState.data}
+                    playerState={this.props.playerState}/>
             case Phase.postquestion:
                 return (
                     <div>
@@ -72,13 +67,15 @@ export default class Main extends React.Component {
                     <div>
                         <h3>Next game starts in:</h3>
                         <Multitimer remainingTimeMs={gameState.phaseRemainingTimeMs}/>
-                        <div>Hello {this.props.account.name}</div>
+                        <div>Hello {this.props.playerState.name}</div>
                     </div>
                 );
         }
     }
 
     render() {
+        const {name, address} = this.props.playerState;
+
         return (
             <div>
                 <input
@@ -88,7 +85,7 @@ export default class Main extends React.Component {
                     onClick={this.leaveClicked}/>
                 <div className='online'>Users online: {this.props.gameState.online}</div>
                 {this.renderGameContent()}
-                <Chat socket={this.props.socket} account={this.props.account}/>
+                <Chat socket={this.props.socket} address={address} name={name}/>
             </div>
         );
     }

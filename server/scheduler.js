@@ -30,7 +30,7 @@ module.exports = class Scheduler {
     }
 
     isNextRound() {
-        return this.question % 5 === 0;
+        return this.question === 5 || this.question === 12;
     }
 
     // Display the game transition screen
@@ -75,7 +75,7 @@ module.exports = class Scheduler {
     startAnswer = () => {
         let next;
         if (this.isGameOver()) {
-            next = this.startGameOver();
+            next = this.startGameOver;
         } else if (this.isNextRound()) {
             next = this.startRound;
         } else {
