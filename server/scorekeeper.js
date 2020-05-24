@@ -12,24 +12,24 @@ module.exports = class Scorekeeper {
         } else {
             this.players[account.id] = new Player(account);
         }
+        return this.players[account.id];
+    }
+
+    disconnectPlayer(account) {
+        this.players[account.id].sid = null;
+        return this.players[account.id];
     }
 
     removePlayer(account) {
         delete this.players[account.id];
     }
 
-    disconnectPlayer(account) {
-        this.players[account.id].sid = null;
-    }
-
-    getPlayer(account) {
-        return this.players[account.id];
-    }
-
-    resetAnswers() {
+    resetAnswers(onChange) {
         for (const id in this.players) {
-            this.players[id].rightAnswers = [];
-            this.players[id].wrongAnswers = [];
+            let player = this.players[id];
+            player.rightAnswers = [];
+            player.wrongAnswers = [];
+            onChange(player);
         }
     }
 

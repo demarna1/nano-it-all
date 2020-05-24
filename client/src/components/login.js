@@ -71,12 +71,17 @@ export default class Login extends React.Component {
         this.setState({gameState});
     }
 
+    playerStateChange = (playerState) => {
+        this.setState({playerState});
+    }
+
     componentDidMount() {
         const {socket} = this.props;
         socket.registerHandler(socket.Events.LOGIN_SUCCESS, this.loginSuccess);
         socket.registerHandler(socket.Events.LOGIN_VERIFY, this.loginVerify);
         socket.registerHandler(socket.Events.LOGOUT_SUCCESS, this.logoutSuccess);
         socket.registerHandler(socket.Events.LOGIN_DUPLICATE, this.loginDuplicate);
+        socket.registerHandler(socket.Events.PLAYER_CHANGE, this.playerStateChange);
         socket.registerHandler(socket.Events.STATE_CHANGE, this.gameStateChange);
     }
 
@@ -86,6 +91,7 @@ export default class Login extends React.Component {
         socket.unregisterHandler(socket.Events.LOGIN_VERIFY, this.loginVerify);
         socket.unregisterHandler(socket.Events.LOGOUT_SUCCESS, this.logoutSuccess);
         socket.unregisterHandler(socket.Events.LOGIN_DUPLICATE, this.loginDuplicate);
+        socket.unregisterHandler(socket.Events.PLAYER_CHANGE, this.playerStateChange);
         socket.unregisterHandler(socket.Events.STATE_CHANGE, this.gameStateChange);
     }
 

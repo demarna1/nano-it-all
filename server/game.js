@@ -1,3 +1,4 @@
+const { S2C } = require('../lib/event');
 const Phase = require('../lib/phase');
 const QReader = require('./qreader');
 const Scheduler = require('./scheduler');
@@ -36,11 +37,18 @@ module.exports = class Game {
         return this.state;
     }
 
-    // Emit state change
+    // Emit game state change
     broadcastState() {
         console.log(`New state: ${JSON.stringify(this.state)}`);
-        io.emit('state', this.getState());
+        io.emit(S2C.STATE_CHANGE, this.getState());
         this.softUpdate = false;
+    }
+
+    // Emit player state change
+    emitPlayerState(player) {
+        if (player.sid) {
+            io.to(player.sid).emit(S2C.PLAYER_CHANGE, player);
+        }
     }
 
     updatePhase(phase, phaseEndDate, round, question) {
@@ -51,7 +59,7 @@ module.exports = class Game {
 
         if (phase == Phase.question) {
             this.state.data = this.qReader.nextQuestion(this.state.round);
-            this.scorekeeper.resetAnswers();
+            this.scorekeeper.resetAnswers(this.emitPlayerState);
         }
     }
 
@@ -61,9 +69,9 @@ module.exports = class Game {
         this.softUpdate = true;
     }
 
-    recordAnswer(account, answer, onReponse) {
+    submitAnswer(account, answer) {
         const right = this.qReader.isRightAnswer(answer);
-        const playerState = this.scorekeeper.addAnswer(account, answer, right);
-        onReponse(playerState);
+        const player = this.scorekeeper.addAnswer(account, answer, right);
+        this.emitPlayerState(player);
     }
 }

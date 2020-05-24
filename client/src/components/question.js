@@ -11,28 +11,23 @@ export default class Question extends React.Component {
             RIGHT: 'answer-right',
             WRONG: 'answer-wrong'
         });
-
-        const choiceStates = {};
-        for (let i = 0; i < props.gameState.data.choices.length; i++) {
-            choiceStates[props.gameState.data.choices[i]] = this.ChoiceState.INITIAL;
-        }
-
-        this.updateChoiceStates(choiceStates, props.playerState);
-
-        this.state = {
-            awaitingResponse: false,
-            isFinishedAnswering: this.isFinishedAnswering(choiceStates),
-            choiceStates
-        };
     }
 
-    updateChoiceStates(choiceStates, playerState) {
+    getUpdatedChoiceStates() {
+        const {gameState, playerState} = this.props;
+        const choiceStates = {};
+
+        for (let i = 0; i < gameState.data.choices.length; i++) {
+            choiceStates[gameState.data.choices[i]] = this.ChoiceState.INITIAL;
+        }
         for (let i = 0; i < playerState.rightAnswers.length; i++) {
             choiceStates[playerState.rightAnswers[i]] = this.ChoiceState.RIGHT;
         }
         for (let i = 0; i < playerState.wrongAnswers.length; i++) {
             choiceStates[playerState.wrongAnswers[i]] = this.ChoiceState.WRONG;
         }
+
+        return choiceStates;
     }
 
     isFinishedAnswering(choiceStates) {
@@ -47,38 +42,13 @@ export default class Question extends React.Component {
 
     choiceClicked = (choice) => {
         this.props.socket.submitAnswer(choice);
-        this.setState({awaitingResponse: true});
-    }
-
-    answerResponse = (playerState) => {
-        const choiceStates = { ...this.state.choiceStates }; // make a copy
-        this.updateChoiceStates(choiceStates, playerState);
-
-        this.setState({
-            awaitingResponse: false,
-            isFinishedAnswering: this.isFinishedAnswering(choiceStates),
-            choiceStates
-        });
-    }
-
-    getDisabled(choice) {
-        return this.state.awaitingResponse ||
-            this.state.isFinishedAnswering ||
-            this.state.choiceStates[choice] !== this.ChoiceState.INITIAL;
-    }
-
-    componentDidMount() {
-        const {socket} = this.props;
-        socket.registerHandler(socket.Events.ANSWER_RESPONSE, this.answerResponse);
-    }
-
-    componentWillUnmount() {
-        const {socket} = this.props;
-        socket.unregisterHandler(socket.Events.ANSWER_RESPONSE, this.answerResponse);
     }
 
     render() {
         const {question, phaseRemainingTimeMs, data} = this.props.gameState;
+
+        const choiceStates = this.getUpdatedChoiceStates();
+        const isFinishedAnswering = this.isFinishedAnswering(choiceStates);
 
         return (
             <div>
@@ -89,10 +59,11 @@ export default class Question extends React.Component {
                     <input
                         key={index}
                         type='button'
-                        className={this.state.choiceStates[choice]}
+                        className={choiceStates[choice]}
                         value={choice}
                         onClick={() => this.choiceClicked(choice)}
-                        disabled={this.getDisabled(choice)}/>
+                        disabled={isFinishedAnswering ||
+                            choiceStates[choice] !== this.ChoiceState.INITIAL}/>
                 )}
             </div>
         );
