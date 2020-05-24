@@ -18,7 +18,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       round: {
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       asked: {
         type: Sequelize.BOOLEAN

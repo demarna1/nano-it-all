@@ -1,9 +1,9 @@
 import React from 'react';
 import Chat from 'components/chat';
 import Multitimer from 'components/multitimer';
-import Question from 'components/question';
-import Round from 'components/round';
+import RankingQuestion from 'components/rankingquestion';
 import SpeedQuestion from 'components/speedquestion';
+import WarmupQuestion from 'components/warmupquestion';
 import {Phase} from 'lib';
 
 export default class Main extends React.Component {
@@ -26,41 +26,21 @@ export default class Main extends React.Component {
                         <div>Ranking Round</div>
                     </div>
                 );
-            case Phase.round:
-                return <Round number={gameState.round}/>
-            case Phase.prequestion:
-                return (
-                    <div>
-                        <h2>Question {gameState.question}</h2>
-                    </div>
-                );
-            case Phase.question:
-                if (gameState.round === 2) {
-                    return <SpeedQuestion
-                        socket={this.props.socket}
-                        gameState={gameState}
-                        playerState={playerState}/>
-                } else {
-                    return <Question
-                        socket={this.props.socket}
-                        gameState={gameState}
-                        playerState={playerState}/>
-                }
-            case Phase.postquestion:
-                return (
-                    <div>
-                        <h2>Question {gameState.question}</h2>
-                        <div>Times Up!</div>
-                    </div>
-                );
-            case Phase.answer:
-                return (
-                    <div>
-                        <h2>Question {gameState.question}</h2>
-                        <div>Answers:</div>
-                        <div>TODO</div>
-                    </div>
-                );
+            case Phase.warmup:
+                return <WarmupQuestion
+                    socket={this.props.socket}
+                    gameState={gameState}
+                    playerState={playerState}/>
+            case Phase.speed:
+                return <SpeedQuestion
+                    socket={this.props.socket}
+                    gameState={gameState}
+                    playerState={playerState}/>
+            case Phase.ranking:
+                return <RankingQuestion
+                    socket={this.props.socket}
+                    gameState={gameState}
+                    playerState={playerState}/>
             case Phase.postgame:
                 return (
                     <div>

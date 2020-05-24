@@ -3,7 +3,7 @@ const app = express();
 const server = require('http').createServer(app);
 const io = module.exports.io = require('socket.io')(server);
 
-const Game = require('./game');
+const Game = require('./game/game');
 module.exports.game = new Game();
 
 const socket = require('./socket');

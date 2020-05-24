@@ -52,17 +52,26 @@ module.exports = function(socket) {
         socket.session.login(address, password);
     });
 
+    // Connections below this must be checked to have a valid session
+    // before performing any operations on game state.
+
     socket.on(C2S.LOGOUT, () => {
-        game.scorekeeper.removePlayer(socket.session.account);
-        socket.session.logout();
+        if (socket.session.account) {
+            game.scorekeeper.removePlayer(socket.session.account);
+            socket.session.logout();
+        }
     });
 
     socket.on(C2S.NEW_CHAT, ({address, message}) => {
-        io.emit(S2C.CHAT_MESSAGE, ({address, message}));
+        if (socket.session.account) {
+            io.emit(S2C.CHAT_MESSAGE, ({address, message}));
+        }
     });
 
     socket.on(C2S.SUBMIT_ANSWER, (answer) => {
-        game.submitAnswer(socket.session.account, answer);
+        if (socket.session.account) {
+            game.submitAnswer(socket.session.account, answer);
+        }
     });
 
     socket.on('disconnect', () => {

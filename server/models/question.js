@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
     question: DataTypes.STRING,
     rightanswers: DataTypes.STRING,
     wronganswers: DataTypes.STRING,
-    round: DataTypes.INTEGER,
+    round: DataTypes.STRING,
     asked: DataTypes.BOOLEAN
   }, {});
   Question.associate = function(models) {

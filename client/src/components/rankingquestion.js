@@ -3,7 +3,7 @@ import Round from 'components/round';
 import Timer from 'components/timer';
 import {Subphase} from 'lib';
 
-export default class SpeedQuestion extends React.Component {
+export default class WarmupQuestion extends React.Component {
 
     constructor(props) {
         super(props);
@@ -33,11 +33,12 @@ export default class SpeedQuestion extends React.Component {
     }
 
     isFinishedAnswering(choiceStates) {
+        let currentAnswers = 0;
         for (const choice in choiceStates) {
             if (choiceStates[choice] !== this.ChoiceState.INITIAL)
-                return true;
+                currentAnswers++;
         }
-        return false;
+        return currentAnswers >= 2;
     }
 
     choiceClicked = (choice) => {
@@ -49,8 +50,8 @@ export default class SpeedQuestion extends React.Component {
 
         if (gameState.subphase === Subphase.round) {
             return <Round
-                title='Speed Round'
-                description='Pick 1 answer, in half the time!'/>
+                title='Ranking Round'
+                description='Rank the answers from first to last'/>
         } else if (gameState.subphase === Subphase.prequestion) {
             return (
                 <div>

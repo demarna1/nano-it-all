@@ -1,10 +1,10 @@
-const { S2C } = require('../lib/event');
-const Phase = require('../lib/phase');
+const {S2C} = require('../../lib/event');
+const {Phase, Subphase} = require('../../lib/phase');
 const QReader = require('./qreader');
 const Scheduler = require('./scheduler');
 const Scorekeeper = require('./scorekeeper');
 const State = require('./state');
-const io = require('./index').io;
+const io = require('../index').io;
 
 module.exports = class Game {
 
@@ -15,8 +15,8 @@ module.exports = class Game {
         this.softUpdate = false;
 
         // Start the scheduler responsible for phase changes
-        this.scheduler = new Scheduler((phase, phaseEndDate, round, question) => {
-            this.updatePhase(phase, phaseEndDate, round, question);
+        this.scheduler = new Scheduler((phase, subphase, phaseEndDate, question) => {
+            this.updatePhase(phase, subphase, phaseEndDate, question);
             this.broadcastState();
         });
 
@@ -28,7 +28,7 @@ module.exports = class Game {
         }, 2000);
     }
 
-    // Returns time left in phase (in milliseconds)
+    // Returns time left in phase or subphase (in milliseconds)
     getPhaseTimeRemainingMs() {
         const nowTime = new Date().getTime();
         const endTime = this.state.phaseEndDate.getTime();
@@ -56,15 +56,17 @@ module.exports = class Game {
         }
     }
 
-    updatePhase(phase, phaseEndDate, round, question) {
+    updatePhase(phase, subphase, phaseEndDate, question) {
         this.state.phase = phase;
+        this.state.subphase = subphase;
         this.state.phaseEndDate = phaseEndDate;
-        this.state.round = round;
         this.state.question = question;
 
-        if (phase == Phase.question) {
-            this.state.data = this.qReader.nextQuestion(this.state.round);
-            this.scorekeeper.resetAnswers(this.state.round, this.emitPlayerState);
+        if (phase == Phase.starting) {
+            this.scorekeeper.resetGame(this.emitPlayerState);
+        } else if (subphase == Subphase.question) {
+            this.state.data = this.qReader.nextQuestion(phase);
+            this.scorekeeper.resetAnswers(this.emitPlayerState);
         }
     }
 
@@ -77,7 +79,14 @@ module.exports = class Game {
     submitAnswer(account, answer) {
         const right = this.qReader.isRightAnswer(answer);
         const timeRemaining = Math.ceil(this.getPhaseTimeRemainingMs() / 1000);
-        const player = this.scorekeeper.addAnswer(account, answer, right, timeRemaining);
+
+        let player;
+        if (this.state.phase === Subphase.speed) {
+            player = this.scorekeeper.addSpeedAnswer(account, answer, right, timeRemaining);
+        } else {
+            player = this.scorekeeper.addAnswer(account, answer, right, timeRemaining);
+        }
+
         this.emitPlayerState(player);
     }
 }
