@@ -28,12 +28,17 @@ module.exports = class Game {
         }, 2000);
     }
 
+    // Returns time left in phase (in milliseconds)
+    getPhaseTimeRemainingMs() {
+        const nowTime = new Date().getTime();
+        const endTime = this.state.phaseEndDate.getTime();
+        return endTime - nowTime;
+    }
+
     // Returns the game state
     getState() {
         // Update phase time left before returning
-        const nowTime = new Date().getTime();
-        const endTime = this.state.phaseEndDate.getTime();
-        this.state.phaseRemainingTimeMs = endTime - nowTime;
+        this.state.phaseRemainingTimeMs = this.getPhaseTimeRemainingMs();
         return this.state;
     }
 
@@ -59,7 +64,7 @@ module.exports = class Game {
 
         if (phase == Phase.question) {
             this.state.data = this.qReader.nextQuestion(this.state.round);
-            this.scorekeeper.resetAnswers(this.emitPlayerState);
+            this.scorekeeper.resetAnswers(this.state.round, this.emitPlayerState);
         }
     }
 
@@ -71,7 +76,8 @@ module.exports = class Game {
 
     submitAnswer(account, answer) {
         const right = this.qReader.isRightAnswer(answer);
-        const player = this.scorekeeper.addAnswer(account, answer, right);
+        const timeRemaining = Math.ceil(this.getPhaseTimeRemainingMs() / 1000);
+        const player = this.scorekeeper.addAnswer(account, answer, right, timeRemaining);
         this.emitPlayerState(player);
     }
 }

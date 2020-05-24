@@ -2,6 +2,7 @@ const Player = require('./player');
 
 module.exports = class Scorekeeper {
     constructor() {
+        this.round = 0;
         this.players = {};
     }
 
@@ -24,7 +25,8 @@ module.exports = class Scorekeeper {
         delete this.players[account.id];
     }
 
-    resetAnswers(onChange) {
+    resetAnswers(round, onChange) {
+        this.round = round;
         for (const id in this.players) {
             let player = this.players[id];
             player.rightAnswers = [];
@@ -33,12 +35,24 @@ module.exports = class Scorekeeper {
         }
     }
 
-    addAnswer(account, answer, right) {
+    addAnswer(account, answer, right, timeRemaining) {
         const player = this.players[account.id];
+
         const answers = right ? player.rightAnswers : player.wrongAnswers;
         if (answers.indexOf(answer) === -1) {
             answers.push(answer);
         }
+
+        if (right) {
+            if (this.round === 1) {
+                player.score += 20 + (5*timeRemaining);
+            } else if (this.round === 2) {
+                player.score += 40 + (10*timeRemaining);
+            } else {
+                player.score += 0;
+            }
+        }
+
         return player;
     }
 }

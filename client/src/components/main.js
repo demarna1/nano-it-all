@@ -3,6 +3,7 @@ import Chat from 'components/chat';
 import Multitimer from 'components/multitimer';
 import Question from 'components/question';
 import Round from 'components/round';
+import SpeedQuestion from 'components/speedquestion';
 import {Phase} from 'lib';
 
 export default class Main extends React.Component {
@@ -34,10 +35,17 @@ export default class Main extends React.Component {
                     </div>
                 );
             case Phase.question:
-                return <Question
-                    socket={this.props.socket}
-                    gameState={gameState}
-                    playerState={playerState}/>
+                if (gameState.round === 2) {
+                    return <SpeedQuestion
+                        socket={this.props.socket}
+                        gameState={gameState}
+                        playerState={playerState}/>
+                } else {
+                    return <Question
+                        socket={this.props.socket}
+                        gameState={gameState}
+                        playerState={playerState}/>
+                }
             case Phase.postquestion:
                 return (
                     <div>
@@ -82,6 +90,9 @@ export default class Main extends React.Component {
                     value='Leave'
                     onClick={this.leaveClicked}/>
                 <div className='online'>Users online: {this.props.gameState.online}</div>
+                {this.props.gameState.phase !== Phase.pregame &&
+                    <div>Score: {this.props.playerState.score}</div>
+                }
                 {this.renderGameContent()}
                 <Chat socket={this.props.socket} address={address} name={name}/>
             </div>
