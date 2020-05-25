@@ -27,7 +27,7 @@ module.exports = class Scorekeeper {
     resetGame(onChange) {
         for (const id in this.players) {
             let player = this.players[id];
-            if (player.score > 0 || player.rightAnswers.length > 0 || player.wrongAnswers > 0) {
+            if (player.score > 0 || player.rightAnswers.length > 0 || player.wrongAnswers.length > 0) {
                 player.score = 0;
                 player.rightAnswers = [];
                 player.wrongAnswers = [];
@@ -39,7 +39,7 @@ module.exports = class Scorekeeper {
     resetAnswers(onChange) {
         for (const id in this.players) {
             let player = this.players[id];
-            if (player.rightAnswers.length > 0 || player.wrongAnswers > 0) {
+            if (player.rightAnswers.length > 0 || player.wrongAnswers.length > 0) {
                 player.rightAnswers = [];
                 player.wrongAnswers = [];
                 onChange(player);

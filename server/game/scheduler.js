@@ -9,9 +9,11 @@ module.exports = class Scheduler {
         this.subphase = Subphase.round;
         this.question = 0;
 
-        const date = new Date(2020, 4, 25, 1, 20, 0);
-        this.cb(this.phase, this.subphase, date, this.question);
-        schedule.scheduleJob(date, this.startGame);
+        //const date = new Date(2020, 4, 25, 1, 20, 0);
+        //this.cb(this.phase, this.subphase, date, this.question);
+        //schedule.scheduleJob(date, this.startGame);
+
+        this.startGame();
     }
 
     runPhase(next, delayMs) {

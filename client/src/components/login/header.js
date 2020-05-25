@@ -1,6 +1,6 @@
 import React from 'react';
 import PeopleIcon from '@material-ui/icons/People';
-import Multitimer from 'components/multitimer';
+import Multitimer from 'components/timer/multitimer';
 import {Phase} from 'lib';
 
 const renderTimerContent = (gameState) => {

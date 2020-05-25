@@ -10,6 +10,16 @@
     margin: 15px;
 }
 
+.name-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+.name-wrapper Button {
+    margin-left: 10px;
+}
+
 .main-header {
     display: flex;
     justify-content: space-between;
@@ -17,7 +27,6 @@
 
 .online {
     display: flex;
-    flex-direction: row;
     justify-content: flex-end;
     align-items: center;
 }

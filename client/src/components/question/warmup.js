@@ -1,9 +1,9 @@
 import React from 'react';
 import Round from 'components/round';
-import Timer from 'components/timer';
+import Timer from 'components/timer/timer';
 import {Subphase} from 'lib';
 
-export default class WarmupQuestion extends React.Component {
+export default class Warmup extends React.Component {
 
     constructor(props) {
         super(props);
@@ -50,8 +50,8 @@ export default class WarmupQuestion extends React.Component {
 
         if (gameState.subphase === Subphase.round) {
             return <Round
-                title='Ranking Round'
-                description='Rank the answers from first to last'/>
+                title='Warmup Round'
+                description='Pick 2 answers'/>
         } else if (gameState.subphase === Subphase.prequestion) {
             return (
                 <div>

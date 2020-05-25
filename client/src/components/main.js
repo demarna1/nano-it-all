@@ -1,10 +1,10 @@
 import React from 'react';
 import {Button} from '@material-ui/core';
 import PeopleIcon from '@material-ui/icons/People';
-import Multitimer from 'components/multitimer';
-import RankingQuestion from 'components/rankingquestion';
-import SpeedQuestion from 'components/speedquestion';
-import WarmupQuestion from 'components/warmupquestion';
+import Multitimer from 'components/timer/multitimer';
+import Ranking from 'components/question/ranking';
+import Speed from 'components/question/speed';
+import Warmup from 'components/question/warmup';
 import {Phase} from 'lib';
 
 export default class Main extends React.Component {
@@ -28,17 +28,17 @@ export default class Main extends React.Component {
                     </div>
                 );
             case Phase.warmup:
-                return <WarmupQuestion
+                return <Warmup
                     socket={this.props.socket}
                     gameState={gameState}
                     playerState={playerState}/>
             case Phase.speed:
-                return <SpeedQuestion
+                return <Speed
                     socket={this.props.socket}
                     gameState={gameState}
                     playerState={playerState}/>
             case Phase.ranking:
-                return <RankingQuestion
+                return <Ranking
                     socket={this.props.socket}
                     gameState={gameState}
                     playerState={playerState}/>

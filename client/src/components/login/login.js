@@ -1,9 +1,9 @@
 import React from 'react';
-import Address from 'components/address';
-import Header from 'components/header';
-import Name from 'components/name';
+import Address from 'components/login/address';
+import Header from 'components/login/header';
+import Name from 'components/login/name';
+import Password from 'components/login/password';
 import Main from 'components/main';
-import Password from 'components/password';
 
 export default class Login extends React.Component {
 
