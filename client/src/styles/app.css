@@ -2,12 +2,9 @@
     text-align: center;
 }
 
-.logout-button {
-    float: left;
-}
-
-.online {
-    text-align: right;
+.main-header {
+    display: flex;
+    justify-content: space-between;
 }
 
 .timer-wrapper {

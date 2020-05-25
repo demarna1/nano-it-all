@@ -64,12 +64,13 @@ export default class Main extends React.Component {
 
         return (
             <div>
-                <input
-                    className='logout-button'
-                    type='button'
-                    value='Leave'
-                    onClick={this.leaveClicked}/>
-                <div className='online'>Users online: {this.props.gameState.online}</div>
+                <div className='main-header'>
+                    <input
+                        type='button'
+                        value='Leave'
+                        onClick={this.leaveClicked}/>
+                    <div>Users online: {this.props.gameState.online}</div>
+                </div>
                 {this.props.gameState.phase !== Phase.pregame &&
                     <div>Score: {this.props.playerState.score}</div>
                 }
