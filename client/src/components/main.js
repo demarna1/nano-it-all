@@ -1,5 +1,6 @@
 import React from 'react';
-import Chat from 'components/chat';
+import {Button} from '@material-ui/core';
+import PeopleIcon from '@material-ui/icons/People';
 import Multitimer from 'components/multitimer';
 import RankingQuestion from 'components/rankingquestion';
 import SpeedQuestion from 'components/speedquestion';
@@ -60,22 +61,24 @@ export default class Main extends React.Component {
     }
 
     render() {
-        const {name, address} = this.props.playerState;
-
         return (
             <div>
                 <div className='main-header'>
-                    <input
-                        type='button'
-                        value='Leave'
-                        onClick={this.leaveClicked}/>
-                    <div>Users online: {this.props.gameState.online}</div>
+                    <Button
+                        variant='contained'
+                        color='primary'
+                        onClick={this.leaveClicked}>
+                        Leave
+                    </Button>
+                    <div className='online'>
+                        <PeopleIcon/>
+                        <div className='onlineCount'>{this.props.gameState.online}</div>
+                    </div>
                 </div>
                 {this.props.gameState.phase !== Phase.pregame &&
                     <div>Score: {this.props.playerState.score}</div>
                 }
                 {this.renderGameContent()}
-                <Chat socket={this.props.socket} address={address} name={name}/>
             </div>
         );
     }

@@ -1,4 +1,5 @@
 import React from 'react';
+import {Button, TextField} from '@material-ui/core';
 
 export default class Address extends React.Component {
 
@@ -42,20 +43,27 @@ export default class Address extends React.Component {
     render() {
         return (
             <div>
-                <div>
-                    <label htmlFor='address'>Address</label>
-                    <input
-                        type='text'
-                        id='address'
+                <div className='address-input'>
+                    <TextField
+                        label='Nano Address'
+                        placeholder='Nano Address'
+                        variant='outlined'
                         value={this.state.address}
-                        placeholder='nano address'
-                        onChange={this.addressChanged}/>
+                        onChange={this.addressChanged}
+                        helperText={this.state.error}
+                        multiline
+                        rows={3}
+                        cols={22}
+                        inputProps={{
+                            style: {fontFamily: 'Courier New'}
+                        }}/>
                 </div>
-                <input
-                    type='button'
-                    value='Join'
-                    onClick={this.joinClicked}/>
-                <div>{this.state.error}</div>
+                <Button
+                    variant='contained'
+                    color='primary'
+                    onClick={this.joinClicked}>
+                    Join
+                </Button>
             </div>
         );
     }

@@ -1,4 +1,5 @@
 import React from 'react';
+import PeopleIcon from '@material-ui/icons/People';
 import Multitimer from 'components/multitimer';
 import {Phase} from 'lib';
 
@@ -18,7 +19,10 @@ const renderTimerContent = (gameState) => {
 export default function Header(props) {
     return (
         <div>
-            <div className='online'>Users online: {props.gameState.online}</div>
+            <div className='online'>
+                <PeopleIcon/>
+                <div className='onlineCount'>{props.gameState.online}</div>
+            </div>
             <h2>Nano-it-all</h2>
             {renderTimerContent(props.gameState)}
         </div>
