@@ -47,10 +47,18 @@
     font-size: 22px;
 }
 
-.answer-right {
-    color: green;
+.question-text {
+    margin-top: 25px;
+    margin-bottom: 10px;
+    font-size: 22px;
 }
 
-.answer-wrong {
-    color: red;
+.choice-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.choice-wrapper Button {
+    margin: 15px;
 }

@@ -1,4 +1,5 @@
 import React from 'react';
+import {Button, Container} from '@material-ui/core';
 import Round from 'components/round';
 import Timer from 'components/timer/timer';
 import {Subphase} from 'lib';
@@ -9,9 +10,9 @@ export default class Speed extends React.Component {
         super(props);
 
         this.ChoiceState = Object.freeze({
-            INITIAL: 'answer-initial',
-            RIGHT: 'answer-right',
-            WRONG: 'answer-wrong'
+            INITIAL: 'primary',
+            RIGHT: 'success',
+            WRONG: 'error'
         });
     }
 
@@ -78,21 +79,24 @@ export default class Speed extends React.Component {
         const isFinishedAnswering = this.isFinishedAnswering(choiceStates);
 
         return (
-            <div>
+            <Container maxWidth='xs'>
                 <h2>Question {gameState.question}</h2>
                 <Timer remainingTimeMs={gameState.phaseRemainingTimeMs}/>
-                <div>{gameState.data.question}</div>
-                {gameState.data.choices.map((choice, index) =>
-                    <input
-                        key={index}
-                        type='button'
-                        className={choiceStates[choice]}
-                        value={choice}
-                        onClick={() => this.choiceClicked(choice)}
-                        disabled={isFinishedAnswering ||
-                            choiceStates[choice] !== this.ChoiceState.INITIAL}/>
-                )}
-            </div>
+                <div className='question-text'>{gameState.data.question}</div>
+                <div className='choice-wrapper'>
+                    {gameState.data.choices.map((choice, index) =>
+                        <Button
+                            variant='contained'
+                            size='large'
+                            color={choiceStates[choice]}
+                            onClick={() => this.choiceClicked(choice)}
+                            disabled={isFinishedAnswering ||
+                                choiceStates[choice] !== this.ChoiceState.INITIAL}>
+                            {choice}
+                        </Button>
+                    )}
+                </div>
+            </Container>
         );
     }
 }
