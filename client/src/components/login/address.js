@@ -52,11 +52,7 @@ export default class Address extends React.Component {
                         onChange={this.addressChanged}
                         helperText={this.state.error}
                         multiline
-                        rows={3}
-                        cols={22}
-                        inputProps={{
-                            style: {fontFamily: 'Courier New'}
-                        }}/>
+                        rows={4}/>
                 </div>
                 <Button
                     variant='contained'

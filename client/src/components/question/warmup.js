@@ -87,6 +87,7 @@ export default class Warmup extends React.Component {
                 <div className='choice-wrapper'>
                     {gameState.data.choices.map((choice, index) =>
                         <Button
+                            key={index}
                             variant='contained'
                             size='large'
                             color={choiceStates[choice]}
