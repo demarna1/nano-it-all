@@ -1,6 +1,6 @@
 import React from 'react';
 import {BottomNavigation, BottomNavigationAction} from '@material-ui/core';
-import {Chat, EmojiEvents, Settings} from '@material-ui/icons';
+import {Chat, EmojiEvents, School, Settings} from '@material-ui/icons';
 import {styled} from '@material-ui/core/styles';
 import MainBar from 'components/mainbar';
 import Multitimer from 'components/timer/multitimer';
@@ -23,6 +23,12 @@ export default class Main extends React.Component {
         this.setState({
             page: value
         });
+    }
+
+    nth(n) {
+        const s = ["th", "st", "nd", "rd"];
+        const v = n % 100;
+        return n + (s[(v - 20) % 10] || s[v] || s[0]);
     }
 
     renderGameContent() {
@@ -64,9 +70,8 @@ export default class Main extends React.Component {
             default:
                 return (
                     <div>
-                        <h3>Next game starts in:</h3>
                         <Multitimer remainingTimeMs={gameState.phaseRemainingTimeMs}/>
-                        <div>Hello {playerState.name}</div>
+                        <div>Welcome {playerState.name}</div>
                     </div>
                 );
         }
@@ -74,8 +79,10 @@ export default class Main extends React.Component {
 
     renderMainContent() {
         switch (this.state.page) {
+            case 'board':
+                return <div>Leaderboard</div>
             case 'chat':
-                return <div>Chat page</div>
+                return <div>Chat</div>
             case 'settings':
                 return <div>Settings</div>
             case 'game':
@@ -91,6 +98,8 @@ export default class Main extends React.Component {
             bottom: 0,
         });
 
+        const leaderboardLabel = `${this.nth(1)} of ${this.props.gameState.online}`;
+
         return (
             <div>
                 <MainBar
@@ -99,7 +108,8 @@ export default class Main extends React.Component {
                     online={this.props.gameState.online}/>
                 {this.renderMainContent()}
                 <MainNavigation value={this.state.page} onChange={this.handleNavigation} showLabels>
-                    <BottomNavigationAction label='Game' value='game' icon={<EmojiEvents/>}/>
+                    <BottomNavigationAction label='Game' value='game' icon={<School/>}/>
+                    <BottomNavigationAction label={leaderboardLabel} value='board' icon={<EmojiEvents/>}/>
                     <BottomNavigationAction label='Chat' value='chat' icon={<Chat/>}/>
                     <BottomNavigationAction label='Settings' value='settings' icon={<Settings/>}/>
                 </MainNavigation>

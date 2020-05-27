@@ -5,9 +5,9 @@ module.exports = class Scorekeeper {
         this.players = {};
     }
 
-    addPlayer(account) {
+    connectPlayer(account) {
         if (this.players.hasOwnProperty(account.id)) {
-            this.players[account.id].sid = account.sid;
+            this.players[account.id].connected = true;
             this.players[account.id].name = account.name;
         } else {
             this.players[account.id] = new Player(account);
@@ -16,23 +16,27 @@ module.exports = class Scorekeeper {
     }
 
     disconnectPlayer(account) {
-        this.players[account.id].sid = null;
-        return this.players[account.id];
-    }
-
-    removePlayer(account) {
-        delete this.players[account.id];
+        this.players[account.id].connected = false;
     }
 
     resetGame(onChange) {
+        const idsToRemove = [];
         for (const id in this.players) {
             let player = this.players[id];
-            if (player.score > 0 || player.rightAnswers.length > 0 || player.wrongAnswers.length > 0) {
-                player.score = 0;
-                player.rightAnswers = [];
-                player.wrongAnswers = [];
-                onChange(player);
+            if (player.connected) {
+                if (player.score > 0 || player.rightAnswers.length > 0 ||
+                        player.wrongAnswers.length > 0) {
+                    player.score = 0;
+                    player.rightAnswers = [];
+                    player.wrongAnswers = [];
+                    onChange(player);
+                }
+            } else {
+                idsToRemove.push(id);
             }
+        }
+        for (const id in idsToRemove) {
+            delete this.players[id];
         }
     }
 

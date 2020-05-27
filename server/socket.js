@@ -17,7 +17,7 @@ module.exports = function(socket) {
     }
 
     onLoginSuccess = (account) => {
-        player = game.scorekeeper.addPlayer(account);
+        player = game.scorekeeper.connectPlayer(account);
         socket.emit(S2C.LOGIN_SUCCESS, {
             gameState: game.getState(),
             playerState: player
@@ -57,7 +57,7 @@ module.exports = function(socket) {
 
     socket.on(C2S.LOGOUT, () => {
         if (socket.session.account) {
-            game.scorekeeper.removePlayer(socket.session.account);
+            game.scorekeeper.disconnectPlayer(socket.session.account);
             socket.session.logout();
         }
     });

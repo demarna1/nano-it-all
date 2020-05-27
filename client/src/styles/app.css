@@ -35,11 +35,21 @@ body {
     font-size: 18px;
 }
 
-.timer-wrapper {
+.next-text {
+    margin-top: 30px;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.multitimer-wrapper {
     display: flex;
     justify-content: center;
     font-family: sans-serif;
     text-align: center;
+}
+
+.timer-wrapper {
+    margin: 5px;
 }
 
 .time {

@@ -5,12 +5,7 @@ import {Phase} from 'lib';
 
 const renderTimerContent = (gameState) => {
     if (gameState.phase === Phase.pregame) {
-        return (
-            <div>
-                <h3>Next game starts in:</h3>
-                <Multitimer remainingTimeMs={gameState.phaseRemainingTimeMs}/>
-            </div>
-        );
+        return <Multitimer remainingTimeMs={gameState.phaseRemainingTimeMs}/>
     } else {
         return <h3>Game in progress. Log in to play now!</h3>
     }

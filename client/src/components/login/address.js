@@ -20,7 +20,7 @@ export default class Address extends React.Component {
         this.setState({error});
     }
 
-    joinClicked = () => {
+    loginClicked = () => {
         const {address} = this.state;
         const nanoRegex = /^(nano|xrb)_[13]{1}[13456789abcdefghijkmnopqrstuwxyz]{59}$/;
         if (!nanoRegex.test(address)) {
@@ -52,13 +52,14 @@ export default class Address extends React.Component {
                         onChange={this.addressChanged}
                         helperText={this.state.error}
                         multiline
-                        rows={4}/>
+                        style={{ width: '310px' }}
+                        rows={2}/>
                 </div>
                 <Button
                     variant='contained'
                     color='primary'
-                    onClick={this.joinClicked}>
-                    Join
+                    onClick={this.loginClicked}>
+                    Login
                 </Button>
             </div>
         );
