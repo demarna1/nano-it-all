@@ -1,7 +1,8 @@
 import React from 'react';
-import {Button, BottomNavigation, BottomNavigationAction} from '@material-ui/core';
-import {Chat, EmojiEvents, People, Settings} from '@material-ui/icons';
+import {BottomNavigation, BottomNavigationAction} from '@material-ui/core';
+import {Chat, EmojiEvents, Settings} from '@material-ui/icons';
 import {styled} from '@material-ui/core/styles';
+import MainBar from 'components/mainbar';
 import Multitimer from 'components/timer/multitimer';
 import Ranking from 'components/question/ranking';
 import Speed from 'components/question/speed';
@@ -16,10 +17,6 @@ export default class Main extends React.Component {
         this.state = {
             page: 'game'
         }
-    }
-
-    leaveClicked = () => {
-        this.props.socket.logout();
     }
 
     handleNavigation = (e, value) => {
@@ -77,12 +74,13 @@ export default class Main extends React.Component {
 
     renderMainContent() {
         switch (this.state.page) {
-            case 'game':
-                return this.renderGameContent();
             case 'chat':
                 return <div>Chat page</div>
             case 'settings':
                 return <div>Settings</div>
+            case 'game':
+            default:
+                return this.renderGameContent();
         }
     }
 
@@ -95,25 +93,12 @@ export default class Main extends React.Component {
 
         return (
             <div>
-                <div className='main-header'>
-                    <Button
-                        variant='contained'
-                        color='primary'
-                        onClick={this.leaveClicked}>
-                        Leave
-                    </Button>
-                    <div className='online'>
-                        <People/>
-                        <div className='onlineCount'>{this.props.gameState.online}</div>
-                    </div>
-                </div>
-                {this.props.gameState.phase !== Phase.pregame &&
-                    <div>Score: {this.props.playerState.score}</div>
-                }
+                <MainBar
+                    socket={this.props.socket}
+                    score={this.props.playerState.score}
+                    online={this.props.gameState.online}/>
                 {this.renderMainContent()}
-                <MainNavigation
-                    value={this.state.page}
-                    onChange={this.handleNavigation}>
+                <MainNavigation value={this.state.page} onChange={this.handleNavigation} showLabels>
                     <BottomNavigationAction label='Game' value='game' icon={<EmojiEvents/>}/>
                     <BottomNavigationAction label='Chat' value='chat' icon={<Chat/>}/>
                     <BottomNavigationAction label='Settings' value='settings' icon={<Settings/>}/>

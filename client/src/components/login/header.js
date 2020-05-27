@@ -19,9 +19,9 @@ const renderTimerContent = (gameState) => {
 export default function Header(props) {
     return (
         <div>
-            <div className='online'>
+            <div className='count-wrapper'>
                 <PeopleIcon/>
-                <div className='onlineCount'>{props.gameState.online}</div>
+                <div className='count-text'>{props.gameState.online}</div>
             </div>
             <h2>Nano-it-all</h2>
             {renderTimerContent(props.gameState)}

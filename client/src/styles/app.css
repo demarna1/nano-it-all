@@ -1,3 +1,7 @@
+body {
+    margin: 0;
+}
+
 #root {
     color: #3f51b5;
 }
@@ -16,22 +20,17 @@
     align-items: flex-end;
 }
 
-.name-wrapper Button {
+.name-wrapper > Button {
     margin-left: 10px;
 }
 
-.main-header {
-    display: flex;
-    justify-content: space-between;
-}
-
-.online {
+.count-wrapper {
     display: flex;
     justify-content: flex-end;
     align-items: center;
 }
 
-.onlineCount {
+.count-text {
     margin: 7px;
     font-size: 18px;
 }
@@ -59,6 +58,6 @@
     justify-content: center;
 }
 
-.choice-wrapper Button {
+.choice-wrapper > Button {
     margin: 15px;
 }

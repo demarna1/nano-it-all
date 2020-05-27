@@ -90,7 +90,7 @@ export default class Ranking extends React.Component {
                             key={index}
                             variant='contained'
                             size='large'
-                            color={choiceStates[choice]}
+                            color='primary'
                             onClick={() => this.choiceClicked(choice)}
                             disabled={isFinishedAnswering ||
                                 choiceStates[choice] !== this.ChoiceState.INITIAL}>
