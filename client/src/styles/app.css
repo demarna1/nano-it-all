@@ -12,10 +12,16 @@ body {
 }
 
 .description {
+    margin: 0 auto;
+    padding: 10px;
+    max-width: 326px;
+    border: 2px solid #3f51b5;
+    border-radius: 4px;
+    background-color: #f2f2f2;
+}
+
+.lower-description {
     margin-top: 25px;
-    margin-bottom: 25px;
-    margin-left: 25px;
-    margin-right: 25px;
 }
 
 .address-input {
@@ -28,23 +34,17 @@ body {
     align-items: flex-end;
 }
 
-.name-wrapper > Button {
+.name-wrapper button {
     margin-left: 10px;
-}
-
-.count-wrapper {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-}
-
-.count-text {
-    margin: 7px;
 }
 
 .next-text {
     margin-top: 30px;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
+}
+
+.multitimer {
+    margin-bottom: 30px;
 }
 
 .multitimer-wrapper {
@@ -60,6 +60,10 @@ body {
 
 .time {
     font-size: 22px;
+}
+
+.onesignal-button {
+    margin-top: 15px;
 }
 
 .question-text {

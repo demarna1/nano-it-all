@@ -103,6 +103,7 @@ export default class Main extends React.Component {
         return (
             <div>
                 <MainBar
+                    loggedIn={true}
                     socket={this.props.socket}
                     score={this.props.playerState.score}
                     online={this.props.gameState.online}/>

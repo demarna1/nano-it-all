@@ -1,5 +1,5 @@
 import React from 'react';
-import PeopleIcon from '@material-ui/icons/People';
+import MainBar from 'components/mainbar';
 import Multitimer from 'components/timer/multitimer';
 import {Phase} from 'lib';
 
@@ -14,11 +14,7 @@ const renderTimerContent = (gameState) => {
 export default function Header(props) {
     return (
         <div>
-            <div className='count-wrapper'>
-                <PeopleIcon/>
-                <div className='count-text'>{props.gameState.online}</div>
-            </div>
-            <h2>Nano-it-all</h2>
+            <MainBar loggedIn={false} online={props.gameState.online}/>
             {renderTimerContent(props.gameState)}
         </div>
     );

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Container, TextField} from '@material-ui/core';
+import {Button, TextField} from '@material-ui/core';
 
 export default class Address extends React.Component {
 
@@ -42,14 +42,20 @@ export default class Address extends React.Component {
 
     render() {
         return (
-            <Container maxWidth='xs'>
+            <div>
                 <div className='description'>
-                    Win small amounts of Nano in this free-to-play live trivia
-                    competition. Simply log in with your Nano address below to play.
-                </div>
-                <div>
-                    Don't have a Nano address yet? <a href='https://natrium.io'
-                    target='_blank'>Download a wallet</a>
+                    <div>
+                        Win some Nano in this free-to-play live trivia competition.
+                        Simply log in with your Nano address below to play.
+                    </div>
+                    <div className='lower-description'>
+                        Don't have a Nano address yet?
+                    </div>
+                    <div>
+                        <a href='https://natrium.io' target='_blank' rel='noopener noreferrer'>
+                            Download a Wallet
+                        </a>
+                    </div>
                 </div>
                 <div className='address-input'>
                     <TextField
@@ -67,7 +73,7 @@ export default class Address extends React.Component {
                     onClick={this.loginClicked}>
                     Login
                 </Button>
-            </Container>
+            </div>
         );
     }
 }

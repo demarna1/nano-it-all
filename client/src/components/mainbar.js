@@ -26,6 +26,10 @@ const styles = theme => ({
     countText: {
         margin: '7px',
         fontSize: '18px'
+    },
+    titleText: {
+        fontSize: 'x-large',
+        fontWeight: 'bold'
     }
 });
 
@@ -36,18 +40,26 @@ function MainBar(props) {
         <AppBar position='static' className={classes.root}>
             <Toolbar>
                 <div className={classes.flex}>
-                    <Button
-                        color='inherit'
-                        className={classes.left}
-                        onClick={() => props.socket.logout()}>
-                        Leave
-                    </Button>
+                    {props.loggedIn &&
+                        <Button
+                            color='inherit'
+                            className={classes.left}
+                            onClick={() => props.socket.logout()}>
+                            Leave
+                        </Button>
+                    }
+                    {!props.loggedIn && <div className={classes.left}/>}
                 </div>
                 <div className={classes.flex}>
-                    <div className={classes.countWrapper}>
-                        <EmojiEvents/>
-                        <div className={classes.countText}>{props.score}</div>
-                    </div>
+                    {props.loggedIn &&
+                        <div className={classes.countWrapper}>
+                            <EmojiEvents/>
+                            <div className={classes.countText}>{props.score}</div>
+                        </div>
+                    }
+                    {!props.loggedIn &&
+                        <div className={classes.titleText}>Nano-it-all</div>
+                    }
                 </div>
                 <div className={classes.flex}>
                     <div className={clsx(classes.right, classes.countWrapper)}>

@@ -103,8 +103,13 @@ export default class Login extends React.Component {
                 return (
                     <div>
                         <Header gameState={gameState}/>
-                        <div>Account in use</div>
-                        <div>Please close other open tabs or log out of other devices.</div>
+                        <div className='description'>
+                            <div>Account in use</div>
+                            <div className='lower-description'>
+                                Please close other open tabs or log out of other devices
+                                and then refresh the page.
+                            </div>
+                        </div>
                     </div>
                 );
             case this.LoginStatus.LOGGEDOUT:

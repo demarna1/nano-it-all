@@ -30,8 +30,8 @@ export default function Multitimer(props) {
   const daysDuration = 7 * daySeconds;
 
   return (
-    <div>
-      <div className='next-text'>Next game:</div>
+    <div className='multitimer'>
+      <div className='next-text'>Next Game</div>
       <div className='multitimer-wrapper'>
         <div className='timer-wrapper'>
           <CountdownCircleTimer
@@ -96,7 +96,7 @@ export default function Multitimer(props) {
           </CountdownCircleTimer>
         </div>
       </div>
-      <div className='onesignal-customlink-container'></div>
+      <div className='onesignal-customlink-container onesignal-button'></div>
     </div>
   );
 }
