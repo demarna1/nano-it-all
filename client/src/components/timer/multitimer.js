@@ -96,6 +96,7 @@ export default function Multitimer(props) {
           </CountdownCircleTimer>
         </div>
       </div>
+      <div className='onesignal-customlink-container'></div>
     </div>
   );
 }

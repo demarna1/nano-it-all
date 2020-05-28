@@ -4,14 +4,22 @@ body {
 
 #root {
     color: #3f51b5;
+    font-size: 18px;
 }
 
 .wrapper {
     text-align: center;
 }
 
+.description {
+    margin-top: 25px;
+    margin-bottom: 25px;
+    margin-left: 25px;
+    margin-right: 25px;
+}
+
 .address-input {
-    margin: 15px;
+    margin: 25px;
 }
 
 .name-wrapper {
@@ -32,13 +40,11 @@ body {
 
 .count-text {
     margin: 7px;
-    font-size: 18px;
 }
 
 .next-text {
     margin-top: 30px;
     margin-bottom: 10px;
-    font-size: 18px;
 }
 
 .multitimer-wrapper {
