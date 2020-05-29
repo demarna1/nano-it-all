@@ -74,7 +74,7 @@ module.exports = function(socket) {
 
     socket.on(C2S.SUBMIT_ANSWER, (answer) => {
         if (socket.session.account) {
-            game.scorekeeper.addAnswer(socket.session.account, answer, onPlayerChange);
+            game.addAnswer(socket.session.account, answer, onPlayerChange);
         }
     });
 

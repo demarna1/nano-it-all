@@ -3,22 +3,37 @@ import {Button} from '@material-ui/core';
 import {withStyles} from '@material-ui/core/styles';
 
 const styles = theme => ({
-    initial: {
+    unselected: {
         margin: '15px',
+    },
+    unselectedRight: {
+        margin: '15px',
+        '&$disabled': {
+            border: '1px solid green',
+            color: 'green'
+        }
+    },
+    selected: {
+        margin: '15px',
+        backgroundColor: theme.palette.primary.main,
+        color: 'white',
         '&$disabled': {
             backgroundColor: theme.palette.primary.main,
             color: 'white'
         }
     },
-    selected: {
+    selectedRight: {
         margin: '15px',
-        backgroundColor: 'white',
-        border: `1px solid ${theme.palette.primary.main}`,
-        color: theme.palette.primary.main,
         '&$disabled': {
-            backgroundColor: 'white',
-            border: `1px solid ${theme.palette.primary.main}`,
-            color: theme.palette.primary.main
+            backgroundColor: theme.palette.success.main,
+            color: 'white'
+        }
+    },
+    selectedWrong: {
+        margin: '15px',
+        '&$disabled': {
+            backgroundColor: theme.palette.error.main,
+            color: 'white'
         }
     },
     disabled: {}
@@ -29,7 +44,7 @@ function Choice(props) {
 
     return (
         <Button
-            variant='contained'
+            variant='outlined'
             color='primary'
             onClick={props.onClick}
             disabled={props.disabled}

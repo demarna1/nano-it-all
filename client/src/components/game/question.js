@@ -11,11 +11,32 @@ export default class Question extends React.Component {
         super(props);
 
         this.ChoiceState = Object.freeze({
-            INITIAL: 'initial',
+            UNSELECTED: 'unselected',
+            UNSELECTEDRIGHT: 'unselectedRight',
             SELECTED: 'selected',
-            RIGHT: 'right',
-            WRONG: 'wrong'
+            SELECTEDRIGHT: 'selectedRight',
+            SELECTEDWRONG: 'selectedWrong'
         });
+    }
+
+    getRevealedChoiceState(choice, isRight, playerState) {
+        if (isRight && playerState.answers.indexOf(choice) > -1) {
+            return this.ChoiceState.SELECTEDRIGHT;
+        } else if (!isRight && playerState.answers.indexOf(choice) > -1) {
+            return this.ChoiceState.SELECTEDWRONG;
+        } else if (isRight) {
+            return this.ChoiceState.UNSELECTEDRIGHT;
+        } else {
+            return this.ChoiceState.UNSELECTED;
+        }
+    }
+
+    getUnrevealedChoiceState(choice, playerState) {
+        if (playerState.answers.indexOf(choice) > -1) {
+            return this.ChoiceState.SELECTED;
+        } else {
+            return this.ChoiceState.UNSELECTED;
+        }
     }
 
     getUpdatedChoiceStates() {
@@ -23,11 +44,15 @@ export default class Question extends React.Component {
         const choiceStates = {};
 
         for (let i = 0; i < gameState.data.choices.length; i++) {
-            choiceStates[gameState.data.choices[i]] = this.ChoiceState.INITIAL;
-        }
-
-        for (let i = 0; i < playerState.answers.length; i++) {
-            choiceStates[playerState.answers[i]] = this.ChoiceState.SELECTED;
+            let choice = gameState.data.choices[i];
+            let cs;
+            if (gameState.subphase === Subphase.answer) {
+                let isRight = gameState.data.isRight[i];
+                cs = this.getRevealedChoiceState(choice, isRight, playerState);
+            } else {
+                cs = this.getUnrevealedChoiceState(choice, playerState);
+            }
+            choiceStates[choice] = cs;
         }
 
         return choiceStates;
@@ -35,6 +60,9 @@ export default class Question extends React.Component {
 
     isFinishedAnswering() {
         const {gameState, playerState} = this.props;
+        if (gameState.subphase !== Subphase.question) {
+            return true;
+        }
         switch (gameState.round) {
             case 1:
                 return playerState.answers.length >= 2;
@@ -55,7 +83,7 @@ export default class Question extends React.Component {
             value: choice,
             onClick: () => this.choiceClicked(choice),
             choiceState: choiceStates[choice],
-            disabled: finished || choiceStates[choice] !== this.ChoiceState.INITIAL
+            disabled: finished || choiceStates[choice] === this.ChoiceState.SELECTED
         };
     }
 

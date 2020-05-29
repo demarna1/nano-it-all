@@ -56,12 +56,25 @@ module.exports = class QReader {
             wronganswers = [];
         }
 
-        this.current = { rightanswers, wronganswers };
-
         const choices = [...rightanswers, ...wronganswers];
         this.shuffleArray(choices);
 
+        const isRight = [];
+        for (let i = 0; i < choices.length; i++) {
+            isRight.push(rightanswers.indexOf(choices[i]) > -1);
+        }
+
+        this.current = {
+            question: question.question,
+            choices,
+            isRight
+        };
+
         return { question: question.question, choices };
+    }
+
+    currentQuestionWithAnswers(round) {
+        return this.current;
     }
 
     isRightAnswer(answer) {

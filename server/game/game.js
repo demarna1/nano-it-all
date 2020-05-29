@@ -56,6 +56,7 @@ module.exports = class Game {
         }
     }
 
+    // Update the game state phase
     updatePhase(phase, subphase, phaseEndDate, round, question) {
         this.state.phase = phase;
         this.state.subphase = subphase;
@@ -68,6 +69,8 @@ module.exports = class Game {
         } else if (subphase == Subphase.question) {
             this.state.data = this.qReader.nextQuestion(round);
             this.scorekeeper.resetAnswers(this.emitPlayerState);
+        } else if (subphase == Subphase.answer) {
+            this.state.data = this.qReader.currentQuestionWithAnswers(round);
         }
     }
 
@@ -75,5 +78,12 @@ module.exports = class Game {
     updateOnline() {
         this.state.online = io.engine.clientsCount;
         this.softUpdate = true;
+    }
+
+    // Record any answers received during the question subphase
+    addAnswer(account, answer, onChange) {
+        if (this.state.subphase === Subphase.question) {
+            this.scorekeeper.addAnswer(account, answer, onChange);
+        }
     }
 }
