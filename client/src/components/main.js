@@ -1,12 +1,8 @@
 import React from 'react';
-import {BottomNavigation, BottomNavigationAction} from '@material-ui/core';
-import {Chat, EmojiEvents, School, Settings} from '@material-ui/icons';
-import {styled} from '@material-ui/core/styles';
 import MainBar from 'components/mainbar';
+import MainNav from 'components/mainnav';
 import Multitimer from 'components/timer/multitimer';
-import Ranking from 'components/question/ranking';
-import Speed from 'components/question/speed';
-import Warmup from 'components/question/warmup';
+import Question from 'components/game/question';
 import {Phase} from 'lib';
 
 export default class Main extends React.Component {
@@ -25,12 +21,6 @@ export default class Main extends React.Component {
         });
     }
 
-    nth(n) {
-        const s = ["th", "st", "nd", "rd"];
-        const v = n % 100;
-        return n + (s[(v - 20) % 10] || s[v] || s[0]);
-    }
-
     renderGameContent() {
         const {gameState, playerState} = this.props;
 
@@ -45,18 +35,8 @@ export default class Main extends React.Component {
                         <div>Ranking Round</div>
                     </div>
                 );
-            case Phase.warmup:
-                return <Warmup
-                    socket={this.props.socket}
-                    gameState={gameState}
-                    playerState={playerState}/>
-            case Phase.speed:
-                return <Speed
-                    socket={this.props.socket}
-                    gameState={gameState}
-                    playerState={playerState}/>
-            case Phase.ranking:
-                return <Ranking
+            case Phase.running:
+                return <Question
                     socket={this.props.socket}
                     gameState={gameState}
                     playerState={playerState}/>
@@ -92,14 +72,6 @@ export default class Main extends React.Component {
     }
 
     render() {
-        const MainNavigation = styled(BottomNavigation)({
-            width: '100%',
-            position: 'fixed',
-            bottom: 0,
-        });
-
-        const leaderboardLabel = `${this.nth(1)} of ${this.props.gameState.online}`;
-
         return (
             <div>
                 <MainBar
@@ -108,12 +80,11 @@ export default class Main extends React.Component {
                     score={this.props.playerState.score}
                     online={this.props.gameState.online}/>
                 {this.renderMainContent()}
-                <MainNavigation value={this.state.page} onChange={this.handleNavigation} showLabels>
-                    <BottomNavigationAction label='Game' value='game' icon={<School/>}/>
-                    <BottomNavigationAction label={leaderboardLabel} value='board' icon={<EmojiEvents/>}/>
-                    <BottomNavigationAction label='Chat' value='chat' icon={<Chat/>}/>
-                    <BottomNavigationAction label='Settings' value='settings' icon={<Settings/>}/>
-                </MainNavigation>
+                <MainNav
+                    page={this.state.page}
+                    onChange={this.handleNavigation}
+                    position={1}
+                    numPlayers={this.props.gameState.online}/>
             </div>
         );
     }

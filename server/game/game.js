@@ -15,8 +15,8 @@ module.exports = class Game {
         this.softUpdate = false;
 
         // Start the scheduler responsible for phase changes
-        this.scheduler = new Scheduler((phase, subphase, phaseEndDate, question) => {
-            this.updatePhase(phase, subphase, phaseEndDate, question);
+        this.scheduler = new Scheduler((phase, subphase, phaseEndDate, round, question) => {
+            this.updatePhase(phase, subphase, phaseEndDate, round, question);
             this.broadcastState();
         });
 
@@ -56,16 +56,17 @@ module.exports = class Game {
         }
     }
 
-    updatePhase(phase, subphase, phaseEndDate, question) {
+    updatePhase(phase, subphase, phaseEndDate, round, question) {
         this.state.phase = phase;
         this.state.subphase = subphase;
         this.state.phaseEndDate = phaseEndDate;
+        this.state.round = round;
         this.state.question = question;
 
         if (phase == Phase.starting) {
             this.scorekeeper.resetGame(this.emitPlayerState);
         } else if (subphase == Subphase.question) {
-            this.state.data = this.qReader.nextQuestion(phase);
+            this.state.data = this.qReader.nextQuestion(round);
             this.scorekeeper.resetAnswers(this.emitPlayerState);
         }
     }
@@ -74,19 +75,5 @@ module.exports = class Game {
     updateOnline() {
         this.state.online = io.engine.clientsCount;
         this.softUpdate = true;
-    }
-
-    submitAnswer(account, answer) {
-        const right = this.qReader.isRightAnswer(answer);
-        const timeRemaining = Math.ceil(this.getPhaseTimeRemainingMs() / 1000);
-
-        let player;
-        if (this.state.phase === Subphase.speed) {
-            player = this.scorekeeper.addSpeedAnswer(account, answer, right, timeRemaining);
-        } else {
-            player = this.scorekeeper.addAnswer(account, answer, right, timeRemaining);
-        }
-
-        this.emitPlayerState(player);
     }
 }

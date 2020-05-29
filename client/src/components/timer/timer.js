@@ -1,9 +1,10 @@
 import React from 'react';
-import { CountdownCircleTimer } from 'react-countdown-circle-timer';
+import {HourglassEmpty} from '@material-ui/icons';
+import {CountdownCircleTimer} from 'react-countdown-circle-timer';
 
 const renderTime = ({ remainingTime }) => {
     if (remainingTime === 0) {
-        return <div>Too late...</div>;
+        return <HourglassEmpty/>
     }
 
     return (
@@ -15,15 +16,13 @@ const renderTime = ({ remainingTime }) => {
 };
 
 export default function Timer(props) {
-    const remainingTime = props.remainingTimeMs / 1000;
-
     return (
-        <div className='timer-wrapper'>
+        <div className='multitimer-wrapper'>
             <CountdownCircleTimer
-                isPlaying
+                key={JSON.stringify(props)}
+                {...props}
                 size={80}
                 strokeWidth={5}
-                duration={remainingTime}
                 colors={[['#004777', 0.4], ['#F7B801', 0.4], ['#A30000']]}
             >
                 {renderTime}

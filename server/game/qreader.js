@@ -7,38 +7,9 @@ module.exports = class QReader {
     // we can return the next question immediately when requested.
     constructor() {
         this.current = null;
-        this.nextWarmup = null;
-        this.nextSpeed = null;
-        this.nextRanking = null;
-        this.readNext(Phase.warmup);
-        this.readNext(Phase.speed);
-        this.readNext(Phase.ranking);
-    }
-
-    setNext(round, question) {
-        switch (round) {
-            case Phase.warmup:
-                this.nextWarmup = question;
-                break;
-            case Phase.speed:
-                this.nextSpeed = question;
-                break;
-            case Phase.ranking:
-            default:
-                this.nextRanking = question;
-                break;
-        }
-    }
-
-    getNext(round) {
-        switch (round) {
-            case Phase.warmup:
-                return this.nextWarmup;
-            case Phase.speed:
-                return this.nextSpeed;
-            case Phase.ranking:
-            default:
-                return this.nextRanking;
+        this.next = [null, null, null];
+        for (let round = 1; round < 4; round++) {
+            this.readNext(round);
         }
     }
 
@@ -51,11 +22,11 @@ module.exports = class QReader {
             }
         }).then((question) => {
             if (question) {
-                this.setNext(round, question);
+                this.next[round-1] = question;
             } else {
                 // All questions for this round have been asked, so reset the
                 // flag so we can ask them again. Then try the read again.
-                console.log(`WARN: Duplicate questions for ${round} round`);
+                console.log(`WARN: Duplicate questions for round ${round}`);
                 models.Question.update({ asked: false }, {
                     where: { round }
                 }).then(() => {
@@ -73,7 +44,7 @@ module.exports = class QReader {
     }
 
     nextQuestion(round) {
-        const question = this.getNext(round);
+        const question = this.next[round-1];
         question.asked = true;
         question.save().then(() => {
             this.readNext(round);

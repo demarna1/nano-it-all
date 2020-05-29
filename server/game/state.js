@@ -8,6 +8,7 @@ module.exports = class State {
         this.subphase = Subphase.round;
         this.phaseEndDate = null;
         this.phaseRemainingTimeMs = 0;
+        this.round = 0;
         this.question = 0;
         this.data = {}
     }
