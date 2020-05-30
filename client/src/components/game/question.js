@@ -114,13 +114,14 @@ export default class Question extends React.Component {
         );
     }
 
-    getTimerProps(round, subphase, remainingTimeMs) {
+    getTimerProps(round, subphase, endDate) {
         const isPlaying = subphase !== Subphase.prequestion;
         const duration = round === 1 ? 12 : (round === 2 ? 7 : 16);
         let initialRemainingTime;
         if (subphase === Subphase.prequestion) {
             initialRemainingTime = duration;
         } else if (subphase === Subphase.question) {
+            const remainingTimeMs = endDate.getTime() - new Date().getTime();
             initialRemainingTime = Math.round(remainingTimeMs / 1000);
         } else {
             initialRemainingTime = 0;
@@ -138,7 +139,7 @@ export default class Question extends React.Component {
         const timerProps = this.getTimerProps(
             gameState.round,
             gameState.subphase,
-            gameState.phaseRemainingTimeMs
+            gameState.phaseEndDate
         );
 
         return (

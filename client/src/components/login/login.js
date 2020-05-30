@@ -40,7 +40,7 @@ export default class Login extends React.Component {
                 address: playerState.address,
                 name: playerState.name
             },
-            gameState,
+            gameState: this.fixGameStateTime(gameState),
             playerState
         });
     }
@@ -49,30 +49,36 @@ export default class Login extends React.Component {
         this.setState({
             loginStatus: this.LoginStatus.PREAUTH,
             account: { address, name },
-            gameState
+            gameState: this.fixGameStateTime(gameState)
         });
     }
 
     logoutSuccess = (gameState) => {
         this.setState({
             loginStatus: this.LoginStatus.LOGGEDOUT,
-            gameState
+            gameState: this.fixGameStateTime(gameState)
         });
     }
 
     loginDuplicate = (gameState) => {
         this.setState({
             loginStatus: this.LoginStatus.DUPLICATE,
-            gameState
+            gameState: this.fixGameStateTime(gameState)
         });
     }
 
     gameStateChange = (gameState) => {
-        this.setState({gameState});
+        this.setState({gameState: this.fixGameStateTime(gameState)});
     }
 
     playerStateChange = (playerState) => {
         this.setState({playerState});
+    }
+
+    // Convert phaseEndDate from server time to local time
+    fixGameStateTime(gameState) {
+        gameState.phaseEndDate = new Date(Date.now() + gameState.phaseRemainingTimeMs);
+        return gameState;
     }
 
     componentDidMount() {

@@ -51,7 +51,7 @@ export default class Main extends React.Component {
             default:
                 return (
                     <div>
-                        <Multitimer remainingTimeMs={gameState.phaseRemainingTimeMs}/>
+                        <Multitimer endDate={gameState.phaseEndDate}/>
                         <div>Welcome {playerState.name}</div>
                     </div>
                 );

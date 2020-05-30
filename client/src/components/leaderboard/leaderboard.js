@@ -30,8 +30,6 @@ const renderTableRow = (player, place, playerState) => {
 }
 
 export default function Leaderboard(props) {
-    const {classes} = props;
-
     return (
         <Container maxWidth='xs'>
             <h2>Leaderboard</h2>

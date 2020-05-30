@@ -26,7 +26,7 @@ const getTimeHours = time => ((time % daySeconds) / hourSeconds) | 0;
 const getTimeDays = time => (time / daySeconds) | 0;
 
 export default function Multitimer(props) {
-  const remainingTime = props.remainingTimeMs / 1000;
+  const remainingTime = (props.endDate.getTime() - new Date().getTime()) / 1000;
   const daysDuration = 7 * daySeconds;
 
   return (
