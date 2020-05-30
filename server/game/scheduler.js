@@ -8,9 +8,11 @@ module.exports = class Scheduler {
         this.round = 0;
         this.question = 0;
 
-        const date = new Date(2020, 5, 1, 1, 0, 0);
-        this.cb(Phase.pregame, Phase.round, date, this.round, this.question);
-        schedule.scheduleJob(date, this.startGame);
+        //const date = new Date(2020, 5, 1, 1, 0, 0);
+        //this.cb(Phase.pregame, Phase.round, date, this.round, this.question);
+        //schedule.scheduleJob(date, this.startGame);
+
+        this.startGame();
     }
 
     getEndDate(delayMs) {
@@ -56,14 +58,14 @@ module.exports = class Scheduler {
         let delayMs;
         switch (this.round) {
             case 1:
-                delayMs = 14000;
+                delayMs = 12000;
                 break;
             case 2:
                 delayMs = 7000;
                 break;
             case 3:
             default:
-                delayMs = 18000;
+                delayMs = 16000;
                 break;
         }
 

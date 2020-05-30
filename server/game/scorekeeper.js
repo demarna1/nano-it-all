@@ -20,7 +20,9 @@ module.exports = class Scorekeeper {
     }
 
     resetGame(onChange) {
+        let leaderboard = [];
         const idsToRemove = [];
+
         for (const id in this.players) {
             let player = this.players[id];
             if (player.sid) {
@@ -29,13 +31,26 @@ module.exports = class Scorekeeper {
                     player.answers = [];
                     onChange(player);
                 }
+
+                leaderboard.push({
+                    id: player.id,
+                    name: player.name,
+                    score: player.score
+                });
             } else {
                 idsToRemove.push(id);
             }
         }
+
         for (const id in idsToRemove) {
             delete this.players[id];
         }
+
+        // Sort and return the leaderboard
+        leaderboard.sort((a, b) => {
+            return b.score - a.score;
+        });
+        return leaderboard;
     }
 
     resetAnswers(onChange) {
@@ -54,5 +69,47 @@ module.exports = class Scorekeeper {
             player.answers.push(answer);
         }
         onChange(player);
+    }
+
+    updateScores(round, questionData, onChange) {
+        const isRight = {};
+        for (let i = 0; i < questionData.choices.length; i++) {
+            isRight[questionData.choices[i]] = questionData.isRight[i];
+        }
+
+        let leaderboard = [];
+        for (const id in this.players) {
+            let changed = false;
+            let player = this.players[id];
+
+            for (let i = 0; i < player.answers.length; i++) {
+                if (isRight[player.answers[i]]) {
+                    if (round === 1) {
+                        player.score += 75;
+                    } else if (round === 2) {
+                        player.score += 150;
+                    } else {
+                        player.score += 120;
+                    }
+                    changed = true;
+                }
+            }
+
+            if (changed) {
+                onChange(player);
+            }
+
+            leaderboard.push({
+                id: player.id,
+                name: player.name,
+                score: player.score
+            });
+        }
+
+        // Sort and return the leaderboard
+        leaderboard.sort((a, b) => {
+            return b.score - a.score;
+        });
+        return leaderboard;
     }
 }

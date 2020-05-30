@@ -1,4 +1,5 @@
 import React from 'react';
+import Leaderboard from 'components/leaderboard/leaderboard';
 import MainBar from 'components/mainbar';
 import MainNav from 'components/mainnav';
 import Multitimer from 'components/timer/multitimer';
@@ -60,7 +61,9 @@ export default class Main extends React.Component {
     renderMainContent() {
         switch (this.state.page) {
             case 'board':
-                return <div>Leaderboard</div>
+                return <Leaderboard
+                    leaderboard={this.props.gameState.leaderboard}
+                    playerState={this.props.playerState}/>
             case 'chat':
                 return <div>Chat</div>
             case 'settings':
@@ -69,6 +72,16 @@ export default class Main extends React.Component {
             default:
                 return this.renderGameContent();
         }
+    }
+
+    getNavLabelPosition() {
+        const {leaderboard} = this.props.gameState;
+        for (let i = 0; i < leaderboard.length; i++) {
+            if (leaderboard[i].id === this.props.playerState.id) {
+                return i+1;
+            }
+        }
+        return leaderboard.length;
     }
 
     render() {
@@ -83,8 +96,8 @@ export default class Main extends React.Component {
                 <MainNav
                     page={this.state.page}
                     onChange={this.handleNavigation}
-                    position={1}
-                    numPlayers={this.props.gameState.online}/>
+                    position={this.getNavLabelPosition()}
+                    numPlayers={this.props.gameState.leaderboard.length}/>
             </div>
         );
     }

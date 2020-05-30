@@ -1,6 +1,7 @@
 module.exports = class Player {
 
     constructor(account) {
+        this.id = account.id;
         this.address = account.address;
         this.name = account.name;
         this.sid = account.sid;

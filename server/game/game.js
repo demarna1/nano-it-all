@@ -65,12 +65,17 @@ module.exports = class Game {
         this.state.question = question;
 
         if (phase == Phase.starting) {
-            this.scorekeeper.resetGame(this.emitPlayerState);
+            this.state.leaderboard = this.scorekeeper.resetGame(this.emitPlayerState);
         } else if (subphase == Subphase.question) {
             this.state.data = this.qReader.nextQuestion(round);
             this.scorekeeper.resetAnswers(this.emitPlayerState);
         } else if (subphase == Subphase.answer) {
             this.state.data = this.qReader.currentQuestionWithAnswers(round);
+            this.state.leaderboard = this.scorekeeper.updateScores(
+                this.state.round,
+                this.state.data,
+                this.emitPlayerState
+            );
         }
     }
 
@@ -81,9 +86,9 @@ module.exports = class Game {
     }
 
     // Record any answers received during the question subphase
-    addAnswer(account, answer, onChange) {
+    addAnswer(account, answer) {
         if (this.state.subphase === Subphase.question) {
-            this.scorekeeper.addAnswer(account, answer, onChange);
+            this.scorekeeper.addAnswer(account, answer, this.emitPlayerState);
         }
     }
 }

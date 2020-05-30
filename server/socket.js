@@ -40,10 +40,6 @@ module.exports = function(socket) {
         socket.emit(S2C.LOGOUT_SUCCESS, game.getState());
     }
 
-    onPlayerChange = (player) => {
-        socket.emit(S2C.PLAYER_CHANGE, player);
-    }
-
     socket.on(C2S.LOGIN_ADDRESS, (address) => {
         socket.session.login(address, null);
     });
@@ -74,7 +70,7 @@ module.exports = function(socket) {
 
     socket.on(C2S.SUBMIT_ANSWER, (answer) => {
         if (socket.session.account) {
-            game.addAnswer(socket.session.account, answer, onPlayerChange);
+            game.addAnswer(socket.session.account, answer);
         }
     });
 

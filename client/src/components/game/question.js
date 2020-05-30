@@ -106,8 +106,7 @@ export default class Question extends React.Component {
                 <div className='question-text'>{gameState.data.question}</div>
                 <div className='choice-wrapper'>
                     {gameState.data.choices.map((choice, index) =>
-                        <Choice
-                            key={index}
+                        <Choice key={index}
                             {...this.getChoiceProps(choice, choiceStates, finished)}/>
                     )}
                 </div>
@@ -117,7 +116,7 @@ export default class Question extends React.Component {
 
     getTimerProps(round, subphase, remainingTimeMs) {
         const isPlaying = subphase !== Subphase.prequestion;
-        const duration = round === 1 ? 14 : (round === 2 ? 7 : 18);
+        const duration = round === 1 ? 12 : (round === 2 ? 7 : 16);
         let initialRemainingTime;
         if (subphase === Subphase.prequestion) {
             initialRemainingTime = duration;
