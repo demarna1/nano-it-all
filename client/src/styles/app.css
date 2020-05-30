@@ -77,3 +77,7 @@ body {
     flex-direction: column;
     justify-content: center;
 }
+
+.top-winners {
+    margin-top: 25px;
+}

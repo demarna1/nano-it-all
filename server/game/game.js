@@ -1,5 +1,6 @@
 const {S2C} = require('../../lib/event');
 const {Phase, Subphase} = require('../../lib/phase');
+const NanoAwarder = require('./nanoawarder');
 const QReader = require('./qreader');
 const Scheduler = require('./scheduler');
 const Scorekeeper = require('./scorekeeper');
@@ -13,6 +14,12 @@ module.exports = class Game {
         this.qReader = new QReader();
         this.scorekeeper = new Scorekeeper();
         this.softUpdate = false;
+
+        // Set the Nano pot size
+        this.nanoAwarder = new NanoAwarder((nanopot) => {
+            this.state.nanopot = nanopot;
+            this.softUpdate = true;
+        });
 
         // Start the scheduler responsible for phase changes
         this.scheduler = new Scheduler((phase, subphase, phaseEndDate, round, question) => {
@@ -66,6 +73,9 @@ module.exports = class Game {
 
         if (phase == Phase.starting) {
             this.state.leaderboard = this.scorekeeper.resetGame(this.emitPlayerState);
+        } else if (phase === Phase.postgame) {
+            this.state.leaderboard = this.nanoAwarder.apportion(this.state.leaderboard);
+            this.nanoAwarder.send(this.state.leaderboard); // async
         } else if (subphase == Subphase.question) {
             this.state.data = this.qReader.nextQuestion(round);
             this.scorekeeper.resetAnswers(this.emitPlayerState);

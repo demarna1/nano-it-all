@@ -1,4 +1,5 @@
 import React from 'react';
+import GameOver from 'components/game/gameover';
 import Leaderboard from 'components/leaderboard/leaderboard';
 import MainBar from 'components/mainbar';
 import MainNav from 'components/mainnav';
@@ -42,11 +43,9 @@ export default class Main extends React.Component {
                     gameState={gameState}
                     playerState={playerState}/>
             case Phase.postgame:
-                return (
-                    <div>
-                        <h2>Game Over!</h2>
-                    </div>
-                );
+                return <GameOver
+                    leaderboard={this.props.gameState.leaderboard}
+                    playerState={this.props.playerState}/>
             case Phase.pregame:
             default:
                 return (
@@ -63,7 +62,8 @@ export default class Main extends React.Component {
             case 'board':
                 return <Leaderboard
                     leaderboard={this.props.gameState.leaderboard}
-                    playerState={this.props.playerState}/>
+                    playerState={this.props.playerState}
+                    phase={this.props.gameState.phase}/>
             case 'chat':
                 return <div>Chat</div>
             case 'settings':
