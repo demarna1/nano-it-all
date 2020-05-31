@@ -1,9 +1,10 @@
 import React from 'react';
 import GameOver from 'components/game/gameover';
+import GameStarting from 'components/game/gamestarting';
 import Leaderboard from 'components/leaderboard/leaderboard';
 import MainBar from 'components/mainbar';
 import MainNav from 'components/mainnav';
-import Multitimer from 'components/timer/multitimer';
+import Pregame from 'components/game/pregame';
 import Question from 'components/game/question';
 import {Phase} from 'lib';
 
@@ -28,15 +29,7 @@ export default class Main extends React.Component {
 
         switch (gameState.phase) {
             case Phase.starting:
-                return (
-                    <div>
-                        <h2>Game is starting!</h2>
-                        <div>There will be 3 rounds:</div>
-                        <div>Warmup Round</div>
-                        <div>Speed Round</div>
-                        <div>Ranking Round</div>
-                    </div>
-                );
+                return <GameStarting/>
             case Phase.running:
                 return <Question
                     socket={this.props.socket}
@@ -48,12 +41,9 @@ export default class Main extends React.Component {
                     playerState={this.props.playerState}/>
             case Phase.pregame:
             default:
-                return (
-                    <div>
-                        <Multitimer endDate={gameState.phaseEndDate}/>
-                        <div>Welcome {playerState.name}</div>
-                    </div>
-                );
+                return <Pregame
+                    endDate={gameState.phaseEndDate}
+                    name={playerState.name}/>
         }
     }
 

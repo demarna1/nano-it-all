@@ -16,8 +16,8 @@ module.exports = class Game {
         this.softUpdate = false;
 
         // Set the Nano pot size
-        this.nanoAwarder = new NanoAwarder((nanopot) => {
-            this.state.nanopot = nanopot;
+        this.nanoAwarder = new NanoAwarder((kraiPot) => {
+            this.state.kraiPot = kraiPot;
             this.softUpdate = true;
         });
 

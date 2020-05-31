@@ -1,3 +1,5 @@
+const NanoClient = require('nano-node-rpc');
+
 module.exports = class NanoAwarder {
 
     constructor(cb) {
@@ -35,8 +37,25 @@ module.exports = class NanoAwarder {
             { m: 1, k: 0.815}    // 25
         ];
 
-        this.nanopot = 5;
-        cb(this.nanopot);
+        this.kraiPot = 0;
+        this.getGamePot().then((krai) => {
+            console.log(`Next game's pot is ${krai/1000} Nano`);
+            this.kraiPot = krai;
+            cb(this.kraiPot);
+        });
+    }
+
+    async getGamePot() {
+        if (process.env.NODE_ENV === 'production' && process.env.NINJA_API_KEY) {
+            const client = new NanoClient({apiKey: process.env.NINJA_API_KEY});
+            let response = await client.account_balance(
+                'xrb_31aoc8ggth588e3xkjsfp7bbbiz85mmpuzcjcq5ygux4jxqp88khhzh77kwb'
+            );
+            response = await client.krai_from_raw(response.balance);
+            return response.amount;
+        } else {
+            return 0;
+        }
     }
 
     // A winner is anyone who scored in the top half among players
@@ -51,21 +70,22 @@ module.exports = class NanoAwarder {
         return Math.min(Math.floor(qualifiedPlayers/2), 25);
     }
 
-    calculateKNano(position, numWinners) {
-        let nano = 0.0;
+    calculateKRai(position, numWinners) {
+        let krai = 0;
         if (numWinners === 1) {
-            nano = 5.0;
+            krai = this.kraiPot;
         } else if (numWinners === 2) {
-            nano = position === 1 ? 3.5 : 1.5;
+            krai = position === 1 ? (0.7*this.kraiPot) : (0.3*this.kraiPot);
         } else if (numWinners === 3) {
-            nano = position === 1 ? 2.5 : (position === 2 ? 1.5 : 1.0);
+            krai = position === 1 ? (0.5*this.kraiPot) :
+                (position === 2 ? (0.3*this.kraiPot) : (0.2*this.kraiPot));
         } else {
             // Apportionment equation: y(x) = mx^(-k)
             let {m, k} = this.MK_TABLE[numWinners];
-            m = m * (this.nanopot/5);
-            nano = m * Math.pow(position, (-1 * k));
+            m = m * (this.kraiPot/5);
+            krai = m * Math.pow(position, (-1 * k));
         }
-        return Math.floor(nano*1000);
+        return Math.floor(krai);
     }
 
     // Divvy up the Nano pot based on finish
@@ -73,9 +93,9 @@ module.exports = class NanoAwarder {
         const numWinners = this.numberOfWinners(leaderboard);
         for (let i = 0; i < leaderboard.length; i++) {
             if (i < numWinners) {
-                leaderboard[i].knano = this.calculateKNano(i+1, numWinners);
+                leaderboard[i].krai = this.calculateKRai(i+1, numWinners);
             } else {
-                leaderboard[i].knano = 0;
+                leaderboard[i].krai = 0;
             }
         }
         return leaderboard;

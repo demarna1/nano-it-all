@@ -18,7 +18,7 @@ const renderTableRow = (player, place, playerState, showNano) => {
                 <SpecialTableCell component='th' scope='row'>{player.name}</SpecialTableCell>
                 <SpecialTableCell align='right'>{player.score}</SpecialTableCell>
                 {showNano &&
-                    <SpecialTableCell align='right'>{`${player.knano/1000} ⋰·⋰`}</SpecialTableCell>
+                    <SpecialTableCell align='right'>{`${player.krai/1000} ⋰·⋰`}</SpecialTableCell>
                 }
             </TableRow>
         );
@@ -29,7 +29,7 @@ const renderTableRow = (player, place, playerState, showNano) => {
                 <TableCell component='th' scope='row'>{player.name}</TableCell>
                 <TableCell align='right'>{player.score}</TableCell>
                 {showNano &&
-                    <TableCell align='right'>{`${player.knano/1000} ⋰·⋰`}</TableCell>
+                    <TableCell align='right'>{`${player.krai/1000} ⋰·⋰`}</TableCell>
                 }
             </TableRow>
         );
