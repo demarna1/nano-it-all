@@ -21,12 +21,11 @@ export default class Login extends React.Component {
 
         this.state = {
             loginStatus: this.LoginStatus.PREINIT,
-            account: {
+            gameState: null,
+            playerState: {
                 address: '',
                 name: ''
-            },
-            gameState: null,
-            playerState: null
+            }
         };
     }
 
@@ -36,10 +35,6 @@ export default class Login extends React.Component {
             : this.LoginStatus.PRENAME
         this.setState({
             loginStatus,
-            account: {
-                address: playerState.address,
-                name: playerState.name
-            },
             gameState: this.fixGameStateTime(gameState),
             playerState
         });
@@ -48,8 +43,8 @@ export default class Login extends React.Component {
     loginVerify = ({gameState, address, name}) => {
         this.setState({
             loginStatus: this.LoginStatus.PREAUTH,
-            account: { address, name },
-            gameState: this.fixGameStateTime(gameState)
+            gameState: this.fixGameStateTime(gameState),
+            playerState: { address, name }
         });
     }
 
@@ -102,7 +97,7 @@ export default class Login extends React.Component {
     }
 
     render() {
-        const {loginStatus, account, gameState, playerState} = this.state;
+        const {loginStatus, gameState, playerState} = this.state;
 
         switch (loginStatus) {
             case this.LoginStatus.DUPLICATE:
@@ -122,21 +117,21 @@ export default class Login extends React.Component {
                 return (
                     <div>
                         <Header gameState={gameState}/>
-                        <Address socket={this.props.socket} account={account}/>
+                        <Address socket={this.props.socket} playerState={playerState}/>
                     </div>
                 );
             case this.LoginStatus.PRENAME:
                 return (
                     <div>
                         <Header gameState={gameState}/>
-                        <Name socket={this.props.socket} account={account}/>
+                        <Name socket={this.props.socket} playerState={playerState}/>
                     </div>
                 );
             case this.LoginStatus.PREAUTH:
                 return (
                     <div>
                         <Header gameState={gameState}/>
-                        <Password socket={this.props.socket} account={account}/>
+                        <Password socket={this.props.socket} playerState={playerState}/>
                     </div>
                 );
             case this.LoginStatus.LOGGEDIN:

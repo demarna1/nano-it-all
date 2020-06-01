@@ -82,6 +82,7 @@ module.exports = class Session {
     // Set the name of this account. Check the socket id to make sure
     // this connection is authorized.
     setName(address, name) {
+        name = name.length > 16 ? name.substr(0, 16) : name;
         models.Account.findOne({
             where: {
                 address,

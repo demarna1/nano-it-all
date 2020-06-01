@@ -6,6 +6,7 @@ import MainBar from 'components/mainbar';
 import MainNav from 'components/mainnav';
 import Pregame from 'components/game/pregame';
 import Question from 'components/game/question';
+import Settings from 'components/settings/settings';
 import {Phase} from 'lib';
 
 export default class Main extends React.Component {
@@ -57,7 +58,9 @@ export default class Main extends React.Component {
             case 'chat':
                 return <div>Chat</div>
             case 'settings':
-                return <div>Settings</div>
+                return <Settings
+                    socket={this.props.socket}
+                    playerState={this.props.playerState}/>
             case 'game':
             default:
                 return this.renderGameContent();

@@ -7,21 +7,24 @@ export default class Name extends React.Component {
         super(props);
 
         this.state = {
-            name: '',
-            error: ''
+            name: props.playerState.name,
+            disabled: true
         };
     }
 
     nameChanged = (e) => {
-        this.setState({name: e.target.value});
+        let name = e.target.value;
+        name = name.length > 16 ? name.substr(0, 16) : name;
+        this.setState({
+            name,
+            disabled: name.length === 0
+        });
     }
 
     okClicked = () => {
-        const {name} = this.state;
-        if (name.length === 0) {
-            this.setState({error: 'Name must be non-empty.'});
-        } else {
-            this.props.socket.loginName(this.props.account.address, name);
+        if (this.state.name) {
+            this.props.socket.loginName(this.props.playerState.address, this.state.name);
+            this.setState({disabled: true});
         }
     }
 
@@ -32,13 +35,13 @@ export default class Name extends React.Component {
                     label='Display Name'
                     placeholder='Display Name'
                     value={this.state.name}
-                    onChange={this.nameChanged}
-                    helperText={this.state.error}/>
+                    onChange={this.nameChanged}/>
                 <Button
                     variant='contained'
                     color='primary'
+                    disabled={this.state.disabled}
                     onClick={this.okClicked}>
-                    OK
+                    Save
                 </Button>
             </div>
         );

@@ -24,7 +24,7 @@ export default class Password extends React.Component {
         if (password.length === 0) {
             this.setState({error: 'Please enter a password'});
         } else {
-            this.props.socket.loginPassword(this.props.account.address, password);
+            this.props.socket.loginPassword(this.props.playerState.address, password);
         }
     }
 
@@ -41,7 +41,7 @@ export default class Password extends React.Component {
     render() {
         return (
             <div>
-                <h2>Welcome back, {this.props.account.name}!</h2>
+                <h2>Welcome back, {this.props.playerState.name}!</h2>
                 <div>
                     <label htmlFor='password'>Password</label>
                     <input

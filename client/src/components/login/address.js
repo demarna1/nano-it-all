@@ -7,7 +7,7 @@ export default class Address extends React.Component {
         super(props);
 
         this.state = {
-            address: this.props.account.address,
+            address: this.props.playerState.address,
             error: ''
         };
     }
