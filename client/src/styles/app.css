@@ -44,6 +44,30 @@ body {
     margin-bottom: 5px;
 }
 
+.chat-window {
+    margin: 0 auto 20px auto;
+    padding: 10px;
+    max-width: 300px;
+    height: 300px;
+    border: 2px solid #3f51b5;
+    border-radius: 4px;
+    background-color: #f2f2f2;
+    text-align: left;
+    overflow-y: scroll;
+}
+
+.chat-row {
+    display: flex;
+}
+
+.chat-name {
+    margin-right: 5px;
+}
+
+.chat-name span {
+    font-weight: bold;
+}
+
 .multitimer {
     margin-bottom: 30px;
 }

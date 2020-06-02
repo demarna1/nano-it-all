@@ -43,8 +43,12 @@ export default () => {
         socket.emit(Event.C2S.LOGOUT);
     }
 
-    function newChat(address, message) {
-        socket.emit(Event.C2S.NEW_CHAT, {address, message});
+    function getChat() {
+        socket.emit(Event.C2S.GET_CHAT);
+    }
+
+    function newChat(message) {
+        socket.emit(Event.C2S.NEW_CHAT, message);
     }
 
     function submitAnswer(answer) {
@@ -59,6 +63,7 @@ export default () => {
         loginName,
         loginPassword,
         logout,
+        getChat,
         newChat,
         submitAnswer
     }

@@ -1,4 +1,5 @@
 import React from 'react';
+import Chat from 'components/chat/chat';
 import GameOver from 'components/game/gameover';
 import GameStarting from 'components/game/gamestarting';
 import Leaderboard from 'components/leaderboard/leaderboard';
@@ -53,10 +54,12 @@ export default class Main extends React.Component {
             case 'board':
                 return <Leaderboard
                     leaderboard={this.props.gameState.leaderboard}
-                    playerState={this.props.playerState}
+                    playerId={this.props.playerState.id}
                     phase={this.props.gameState.phase}/>
             case 'chat':
-                return <div>Chat</div>
+                return <Chat
+                    socket={this.props.socket}
+                    playerId={this.props.playerState.id}/>
             case 'settings':
                 return <Settings
                     socket={this.props.socket}

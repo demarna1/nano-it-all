@@ -13,6 +13,7 @@ module.exports = class Game {
         this.state = new State();
         this.qReader = new QReader();
         this.scorekeeper = new Scorekeeper();
+        this.chatHistory = [];
         this.softUpdate = false;
 
         // Set the Nano pot size
@@ -49,11 +50,16 @@ module.exports = class Game {
         return this.state;
     }
 
-    // Emit game state change
+    // Broadcast game state change
     broadcastState() {
         console.log(`New state: ${JSON.stringify(this.state)}`);
         io.emit(S2C.STATE_CHANGE, this.getState());
         this.softUpdate = false;
+    }
+
+    // Broadcast chat message
+    broadcastChat(chat) {
+        io.emit(S2C.CHAT_MESSAGE, chat);
     }
 
     // Emit player state change
@@ -100,5 +106,31 @@ module.exports = class Game {
         if (this.state.subphase === Subphase.question) {
             this.scorekeeper.addAnswer(account, answer, this.emitPlayerState);
         }
+    }
+
+    // Returns chat history
+    getChatHistory() {
+        return this.chatHistory;
+    }
+
+    // Record and broadcast chat messages
+    addChat(account, message) {
+        // Trim chat history if it grows too big
+        if (this.chatHistory.length >= 50) {
+            this.chatHistory = this.chatHistory.slice(10);
+        }
+
+        // Trim message if it's too long
+        message = message.length > 80 ? message.substr(0, 80) : message;
+
+        const chat = {
+            id: account.id,
+            name: account.name,
+            timestamp: Date.now(),
+            message
+        };
+
+        this.chatHistory.push(chat);
+        this.broadcastChat(chat);
     }
 }

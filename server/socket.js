@@ -52,6 +52,10 @@ module.exports = function(socket) {
         socket.session.login(address, password);
     });
 
+    socket.on(C2S.GET_CHAT, () => {
+        socket.emit(S2C.CHAT_HISTORY, game.getChatHistory());
+    });
+
     // Connections below this must be checked to have a valid session
     // before performing any operations on game state.
 
@@ -62,9 +66,9 @@ module.exports = function(socket) {
         }
     });
 
-    socket.on(C2S.NEW_CHAT, ({address, message}) => {
+    socket.on(C2S.NEW_CHAT, (message) => {
         if (socket.session.account) {
-            io.emit(S2C.CHAT_MESSAGE, ({address, message}));
+            game.addChat(socket.session.account, message);
         }
     });
 

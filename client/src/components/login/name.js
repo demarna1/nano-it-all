@@ -21,7 +21,7 @@ export default class Name extends React.Component {
         });
     }
 
-    okClicked = () => {
+    saveClicked = () => {
         if (this.state.name) {
             this.props.socket.loginName(this.props.playerState.address, this.state.name);
             this.setState({disabled: true});
@@ -40,7 +40,7 @@ export default class Name extends React.Component {
                     variant='contained'
                     color='primary'
                     disabled={this.state.disabled}
-                    onClick={this.okClicked}>
+                    onClick={this.saveClicked}>
                     Save
                 </Button>
             </div>

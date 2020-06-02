@@ -10,8 +10,8 @@ const SpecialTableCell = withStyles((theme) => ({
     }
 }))(TableCell);
 
-const renderTableRow = (player, place, playerState, showNano) => {
-    if (player.id === playerState.id) {
+const renderTableRow = (player, place, playerId, showNano) => {
+    if (player.id === playerId) {
         return (
             <TableRow key={place}>
                 <SpecialTableCell>{place+1}</SpecialTableCell>
@@ -56,7 +56,7 @@ export default function Leaderboard(props) {
                     </TableHead>
                     <TableBody>
                         {props.leaderboard.map((player, place) =>
-                            renderTableRow(player, place, props.playerState, showNano)
+                            renderTableRow(player, place, props.playerId, showNano)
                         )}
                     </TableBody>
                 </Table>
