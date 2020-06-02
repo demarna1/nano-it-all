@@ -21,47 +21,63 @@ module.exports = class NanoRPC {
     }
 
     getRawFromKrai(krai) {
-        return `${krai}000000000000000000000000000`;
+        if (krai > 0) {
+            return `${krai}000000000000000000000000000`;
+        } else {
+            return '0';
+        }
     }
 
     // Returns balance (in krai) of the game account
     async getBalance() {
         if (this.active) {
-            let response = await this.client.account_balance(this.GAME_ADDRESS);
-            return this.getKraiFromRaw(response.balance);
-        } else {
-            return 0;
+            try {
+                console.log('Looking up account balance');
+                let response = await this.client.account_balance(this.GAME_ADDRESS);
+                return this.getKraiFromRaw(response.balance);
+            } catch (error) {
+                console.log(`RPC error: ${error.message}`);
+            }
         }
+        return 0;
     }
 
     // Sends amount (in krai) from the game account to the given address
     async sendToAddress(krai, address) {
         if (this.active) {
-            let accountInfo = await this.client._send('account_info', {
-                account: this.GAME_ADDRESS,
-                representative: 'true'
-            });
+            try {
+                console.log('Looking up account info');
+                let accountInfo = await this.client._send('account_info', {
+                    account: this.GAME_ADDRESS,
+                    representative: 'true'
+                });
+                console.log(`Account info: ${JSON.stringify(accountInfo)}`);
 
-            let currentKrai = this.getKraiFromRaw(accountInfo.balance);
-            let afterRaw = this.getRawFromKrai(currentKrai - krai);
+                let currentKrai = this.getKraiFromRaw(accountInfo.balance);
+                let afterRaw = this.getRawFromKrai(currentKrai - krai);
+                console.log(`New balance after send: ${afterRaw}`);
 
-            let response = await this.client._send('block_create', {
-                'json_block': 'true',
-                'type': 'state',
-                'previous': accountInfo.frontier,
-                'account': this.GAME_ADDRESS,
-                'representative': accountInfo.representative,
-                'balance': afterRaw,
-                'link': address,
-                'key': this.GAME_PRIV_KEY
-            });
+                let response = await this.client._send('block_create', {
+                    'json_block': 'true',
+                    'type': 'state',
+                    'previous': accountInfo.frontier,
+                    'account': this.GAME_ADDRESS,
+                    'representative': accountInfo.representative,
+                    'balance': afterRaw,
+                    'link': address,
+                    'key': this.GAME_PRIV_KEY
+                });
+                console.log(`Block created: ${JSON.stringify(response)}`);
 
-            await this.client._send('process', {
-                'json_block': 'true',
-                'subtype': 'send',
-                'block': response.block
-            });
-            console.log(`New balance after send: ${afterRaw}`);
+                response = await this.client._send('process', {
+                    'json_block': 'true',
+                    'subtype': 'send',
+                    'block': response.block
+                });
+                console.log(`Send complete: ${JSON.stringify(response)}`);
+            } catch (error) {
+                console.log(`RPC error: ${error.message}`);
+            }
         }
     }
 }
