@@ -5,7 +5,7 @@ export default function Pregame(props) {
     const soon = props.endDate.getTime() - new Date().getTime() < 3600000;
     return (
         <div>
-            <Multitimer endDate={props.endDate}/>
+            <Multitimer endDate={props.endDate} kraiPot={props.kraiPot}/>
             <h2>Welcome {props.name}</h2>
             {soon &&
                 <div className='description'>

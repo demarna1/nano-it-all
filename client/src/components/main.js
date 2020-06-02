@@ -16,13 +16,37 @@ export default class Main extends React.Component {
         super(props);
 
         this.state = {
-            page: 'game'
+            page: 'game',
+            unreadChats: false,
+            chatHistory: []
         }
     }
 
     handleNavigation = (e, value) => {
+        if (this.state.unreadChats && value === 'chat') {
+            this.setState({
+                page: value,
+                unreadChats: false
+            });
+        } else {
+            this.setState({
+                page: value
+            });
+        }
+    }
+
+    resetChatHistory = (chatHistory) => {
+        const moreChats = chatHistory.length !== this.state.chatHistory.length;
         this.setState({
-            page: value
+            chatHistory,
+            unreadChats: moreChats && this.state.page !== 'chat'
+        });
+    }
+
+    newChatMessage = (chat) => {
+        this.setState({
+            chatHistory: [...this.state.chatHistory, chat],
+            unreadChats: this.state.page !== 'chat'
         });
     }
 
@@ -45,6 +69,7 @@ export default class Main extends React.Component {
             default:
                 return <Pregame
                     endDate={gameState.phaseEndDate}
+                    kraiPot={gameState.kraiPot}
                     name={playerState.name}/>
         }
     }
@@ -59,7 +84,7 @@ export default class Main extends React.Component {
             case 'chat':
                 return <Chat
                     socket={this.props.socket}
-                    playerId={this.props.playerState.id}/>
+                    history={this.state.chatHistory}/>
             case 'settings':
                 return <Settings
                     socket={this.props.socket}
@@ -80,6 +105,19 @@ export default class Main extends React.Component {
         return leaderboard.length;
     }
 
+    componentDidMount() {
+        const {socket} = this.props;
+        socket.registerHandler(socket.Events.CHAT_HISTORY, this.resetChatHistory);
+        socket.registerHandler(socket.Events.CHAT_MESSAGE, this.newChatMessage);
+        socket.getChat();
+    }
+
+    componentWillUnmount() {
+        const {socket} = this.props;
+        socket.unregisterHandler(socket.Events.CHAT_HISTORY, this.resetChatHistory);
+        socket.unregisterHandler(socket.Events.CHAT_MESSAGE, this.newChatMessage);
+    }
+
     render() {
         return (
             <div>
@@ -93,7 +131,8 @@ export default class Main extends React.Component {
                     page={this.state.page}
                     onChange={this.handleNavigation}
                     position={this.getNavLabelPosition()}
-                    numPlayers={this.props.gameState.leaderboard.length}/>
+                    numPlayers={this.props.gameState.leaderboard.length}
+                    unreadChats={this.state.unreadChats}/>
             </div>
         );
     }

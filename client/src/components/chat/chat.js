@@ -6,7 +6,6 @@ export default class Chat extends React.Component {
         super(props);
 
         this.state = {
-            history: [],
             message: '',
             disabled: true
         }
@@ -38,26 +37,8 @@ export default class Chat extends React.Component {
         this.chatList.scrollIntoView({behavior: 'smooth'});
     }
 
-    resetChatHistory = (history) => {
-        this.setState({history});
-    }
-
-    newChatMessage = (chat) => {
-        this.setState({history: [...this.state.history, chat]});
-    }
-
     componentDidMount() {
         this.scrollToBottom();
-        const {socket} = this.props;
-        socket.registerHandler(socket.Events.CHAT_HISTORY, this.resetChatHistory);
-        socket.registerHandler(socket.Events.CHAT_MESSAGE, this.newChatMessage);
-        socket.getChat();
-    }
-
-    componentWillUnmount() {
-        const {socket} = this.props;
-        socket.unregisterHandler(socket.Events.CHAT_HISTORY, this.resetChatHistory);
-        socket.unregisterHandler(socket.Events.CHAT_MESSAGE, this.newChatMessage);
     }
 
     componentDidUpdate() {
@@ -69,7 +50,7 @@ export default class Chat extends React.Component {
             <div>
                 <h2>Chat</h2>
                 <div className='chat-window'>
-                    {this.state.history.map((chat, index) =>
+                    {this.props.history.map((chat, index) =>
                         <div className='chat-row' key={index}>
                             <div className='chat-name'><span>{chat.name}</span>:</div>
                             <div>{chat.message}</div>

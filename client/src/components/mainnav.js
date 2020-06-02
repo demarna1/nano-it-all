@@ -1,5 +1,5 @@
 import React from 'react';
-import {BottomNavigation, BottomNavigationAction} from '@material-ui/core';
+import {Badge, BottomNavigation, BottomNavigationAction} from '@material-ui/core';
 import {Chat, EmojiEvents, School, Settings} from '@material-ui/icons';
 import {withStyles} from '@material-ui/core/styles';
 
@@ -9,7 +9,15 @@ const styles = theme => ({
         position: 'fixed',
         bottom: 0
     }
-})
+});
+
+const getChatIcon = (unreadChats) => {
+    return (
+        <Badge color='secondary' variant='dot' invisible={!unreadChats}>
+            <Chat/>
+        </Badge>
+    );
+};
 
 const nth = (n) => {
     const s = ["th", "st", "nd", "rd"];
@@ -29,7 +37,7 @@ function MainNav(props) {
             showLabels>
             <BottomNavigationAction label='Game' value='game' icon={<School/>}/>
             <BottomNavigationAction label={boardLabel} value='board' icon={<EmojiEvents/>}/>
-            <BottomNavigationAction label='Chat' value='chat' icon={<Chat/>}/>
+            <BottomNavigationAction label='Chat' value='chat' icon={getChatIcon(props.unreadChats)}/>
             <BottomNavigationAction label='Settings' value='settings' icon={<Settings/>}/>
         </BottomNavigation>
     );

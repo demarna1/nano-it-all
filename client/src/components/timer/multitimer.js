@@ -96,6 +96,10 @@ export default function Multitimer(props) {
           </CountdownCircleTimer>
         </div>
       </div>
+      <div>
+        <div>Next Prize</div>
+        <div className='prize'>{props.kraiPot/1000} ⋰·⋰</div>
+      </div>
     </div>
   );
 }

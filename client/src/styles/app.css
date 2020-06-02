@@ -44,6 +44,12 @@ body {
     margin-bottom: 5px;
 }
 
+.prize {
+    font-family: sans-serif;
+    font-size: 28px;
+    margin: 5px;
+}
+
 .chat-window {
     margin: 0 auto 20px auto;
     padding: 10px;
