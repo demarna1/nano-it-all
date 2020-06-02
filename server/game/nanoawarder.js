@@ -1,4 +1,4 @@
-const NanoClient = require('nano-node-rpc');
+const NanoRPC = require('./nanorpc');
 
 module.exports = class NanoAwarder {
 
@@ -38,24 +38,13 @@ module.exports = class NanoAwarder {
         ];
 
         this.kraiPot = 0;
-        this.getGamePot().then((krai) => {
+        this.nanoRPC = new NanoRPC();
+
+        this.nanoRPC.getBalance().then((krai) => {
             console.log(`Next game's pot is ${krai/1000} Nano`);
             this.kraiPot = krai;
             cb(this.kraiPot);
         });
-    }
-
-    async getGamePot() {
-        if (process.env.NODE_ENV === 'production' && process.env.NINJA_API_KEY) {
-            const client = new NanoClient({apiKey: process.env.NINJA_API_KEY});
-            let response = await client.account_balance(
-                'xrb_31aoc8ggth588e3xkjsfp7bbbiz85mmpuzcjcq5ygux4jxqp88khhzh77kwb'
-            );
-            response = await client.krai_from_raw(response.balance);
-            return response.amount;
-        } else {
-            return 0;
-        }
     }
 
     // A winner is anyone who scored in the top half among players
@@ -102,7 +91,12 @@ module.exports = class NanoAwarder {
     }
 
     // Send out the Nano
-    send(leaderboard) {
-
+    async send(leaderboard) {
+        for (let i = 0; i < leaderboard.length; i++) {
+            const player = leaderboard[i];
+            if (player.krai > 0) {
+                await this.nanoRPC.sendToAddress(player.krai, player.address);
+            }
+        }
     }
 }

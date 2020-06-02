@@ -81,7 +81,10 @@ module.exports = class Game {
             this.state.leaderboard = this.scorekeeper.resetGame(this.emitPlayerState);
         } else if (phase === Phase.postgame) {
             this.state.leaderboard = this.nanoAwarder.apportion(this.state.leaderboard);
-            this.nanoAwarder.send(this.state.leaderboard); // async
+            this.nanoAwarder.send(this.state.leaderboard)
+                .then(() => {
+                    console.log('All Nano rewards have been sent');
+                });
         } else if (subphase == Subphase.question) {
             this.state.data = this.qReader.nextQuestion(round);
             this.scorekeeper.resetAnswers(this.emitPlayerState);

@@ -8,7 +8,7 @@ module.exports = class Scheduler {
         this.round = 0;
         this.question = 0;
 
-        const date = new Date(2020, 5, 3, 1, 0, 0);
+        const date = new Date(2020, 5, 2, 15, 30, 0);
         this.cb(Phase.pregame, Phase.round, date, this.round, this.question);
         schedule.scheduleJob(date, this.startGame);
     }

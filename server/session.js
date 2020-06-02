@@ -37,6 +37,12 @@ module.exports = class Session {
             return;
         }
 
+        // The Nano-it-all address is invalid
+        if (address === 'nano_11y6k3mtobx1kosxyyauq1aejerg3r7xfommtr89n18yzw51fpeqdbtb8ars') {
+            this.cb.onAddressError('Invalid Nano address');
+            return;
+        }
+
         // Check again for an existing connection with this token. The user
         // could have joined in another tab since this socket had connected.
         let account = await models.Account.findOne({
