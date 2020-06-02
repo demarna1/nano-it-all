@@ -95,7 +95,9 @@ module.exports = class NanoAwarder {
         for (let i = 0; i < leaderboard.length; i++) {
             const player = leaderboard[i];
             if (player.krai > 0) {
+                console.log(`Sending ${player.krai} krai reward to ${player.address}`);
                 await this.nanoRPC.sendToAddress(player.krai, player.address);
+                console.log('Send complete');
             }
         }
     }

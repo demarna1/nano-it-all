@@ -35,6 +35,7 @@ module.exports = class Scorekeeper {
                 leaderboard.push({
                     id: player.id,
                     name: player.name,
+                    address: player.address,
                     score: player.score
                 });
             } else {
@@ -102,6 +103,7 @@ module.exports = class Scorekeeper {
             leaderboard.push({
                 id: player.id,
                 name: player.name,
+                address: player.address,
                 score: player.score
             });
         }

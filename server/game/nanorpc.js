@@ -37,7 +37,6 @@ module.exports = class NanoRPC {
     // Sends amount (in krai) from the game account to the given address
     async sendToAddress(krai, address) {
         if (this.active) {
-            console.log(`Sending ${krai} krai reward to ${address}`);
             let accountInfo = await this.client._send('account_info', {
                 account: this.GAME_ADDRESS,
                 representative: 'true'
@@ -62,7 +61,7 @@ module.exports = class NanoRPC {
                 'subtype': 'send',
                 'block': response.block
             });
-            console.log(`Send complete. New balance after send: ${afterRaw}`);
+            console.log(`New balance after send: ${afterRaw}`);
         }
     }
 }

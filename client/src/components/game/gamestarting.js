@@ -8,7 +8,7 @@ export default function GameStarting(props) {
                 <div>There will be 3 rounds:</div>
                 <div>Warmup Round</div>
                 <div>Speed Round</div>
-                <div>Ranking Round</div>
+                <div>Final Round</div>
             </div>
         </div>
     );

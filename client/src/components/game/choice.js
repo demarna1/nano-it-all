@@ -20,6 +20,10 @@ const styles = theme => ({
         '&$disabled': {
             backgroundColor: theme.palette.primary.main,
             color: 'white'
+        },
+        '&:hover.Mui-disabled': {
+            backgroundColor: theme.palette.primary.main,
+            color: 'white'
         }
     },
     selectedRight: {
@@ -27,11 +31,19 @@ const styles = theme => ({
         '&$disabled': {
             backgroundColor: theme.palette.success.main,
             color: 'white'
+        },
+        '&:hover.Mui-disabled': {
+            backgroundColor: theme.palette.success.main,
+            color: 'white'
         }
     },
     selectedWrong: {
         margin: '15px',
         '&$disabled': {
+            backgroundColor: theme.palette.error.main,
+            color: 'white'
+        },
+        '&:hover.Mui-disabled': {
             backgroundColor: theme.palette.error.main,
             color: 'white'
         }
