@@ -9,7 +9,7 @@ const renderTimerContent = (gameState) => {
             endDate={gameState.phaseEndDate}
             kraiPot={gameState.kraiPot}/>
     } else {
-        return <h3>Game in progress. Log in to play now!</h3>
+        return <h3>Game is currency in PRACTICE mode. Log in to play now!</h3>
     }
 }
 

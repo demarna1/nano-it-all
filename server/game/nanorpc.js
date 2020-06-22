@@ -3,8 +3,9 @@ const NanoClient = require('nano-node-rpc');
 module.exports = class NanoRPC {
 
     constructor() {
-        this.active = process.env.NODE_ENV === 'production' &&
-            process.env.NINJA_API_KEY && process.env.GAME_PRIV_KEY;
+        //this.active = process.env.NODE_ENV === 'production' &&
+            //process.env.NINJA_API_KEY && process.env.GAME_PRIV_KEY;
+        this.active = false;
         if (this.active) {
             this.GAME_ADDRESS = 'nano_11y6k3mtobx1kosxyyauq1aejerg3r7xfommtr89n18yzw51fpeqdbtb8ars';
             this.GAME_PRIV_KEY = process.env.GAME_PRIV_KEY;

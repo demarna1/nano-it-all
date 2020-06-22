@@ -8,9 +8,10 @@ module.exports = class Scheduler {
         this.round = 0;
         this.question = 0;
 
-        const date = new Date(2020, 5, 21, 20, 0, 0);
-        this.cb(Phase.pregame, Phase.round, date, this.round, this.question);
-        schedule.scheduleJob(date, this.startGame);
+        //const date = new Date(2020, 5, 21, 20, 0, 0);
+        //this.cb(Phase.pregame, Phase.round, date, this.round, this.question);
+        //schedule.scheduleJob(date, this.startGame);
+        this.startGame();
     }
 
     getEndDate(delayMs) {
@@ -91,7 +92,8 @@ module.exports = class Scheduler {
 
     // Display the game over page
     startGameOver = () => {
-        const endDate = this.getEndDate(10000);
-        this.cb(Phase.postgame, Subphase.round, endDate, this.round, this.question);
+        //const endDate = this.getEndDate(10000);
+        //this.cb(Phase.postgame, Subphase.round, endDate, this.round, this.question);
+        this.runPhase(Phase.starting, this.startGame, 10000);
     }
 }
